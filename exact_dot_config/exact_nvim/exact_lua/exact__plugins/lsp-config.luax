@@ -1,0 +1,39 @@
+return {
+  {
+    "williamboman/mason.nvim",
+    opts = {
+      ensure_installed = {
+        "bash-language-server",
+        "blade-formatter",
+        "docker-compose-language-service",
+        "dockerfile-language-server",
+        "html-lsp",
+        "nginx-language-server",
+        "php-debug-adapter",
+        "phpstan",
+        "shellcheck",
+        "stylua",
+        "tailwindcss-language-server",
+      },
+    },
+  },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      -- @type lspconfig.options
+      servers = {
+        emmet_ls = {
+          filetypes = {
+            "blade",
+            "css",
+            "html",
+            "less",
+            "sass",
+            "scss",
+            "vue",
+          },
+        },
+      },
+    },
+  },
+}
