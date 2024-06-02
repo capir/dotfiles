@@ -6,7 +6,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/c/.oh-my-zsh
+export ZSH=~/.oh-my-zsh
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -109,12 +109,6 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
-# incarcare phpbrew
-#export PHPBREW_SET_PROMPT=1
-#export PHPBREW_RC_ENABLE=1
-#source /Users/c/.phpbrew/bashrc
-
-
 # Load Git completion
 zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
 fpath=(~/.zsh $fpath)
@@ -123,7 +117,6 @@ autoload -Uz compinit && compinit
 
 export PHPBREW_SET_PROMPT=1
 export PHPBREW_RC_ENABLE=1
-source ~/.phpbrew/bashrc
 export PYTHONPATH="/usr/local/lib/python3.9/site-packages:$PYTHONPATH"
 export PATH="/opt/homebrew/bin:$PATH"
 # source $(brew --prefix nvm)/nvm.sh
