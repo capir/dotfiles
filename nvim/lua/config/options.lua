@@ -3,8 +3,14 @@
 -- Add any additional options here
 
 vim.opt.incsearch = true
--- vim.opt.ecrolloff = 8 -- lines of context
+vim.opt.title = true
+vim.opt.spell = true
+vim.opt.scrolloff = 8 -- lines of context
 -- vim.g.loaded_ruby_provider = 0
+
+-- crează un bkp la salvarea oricarui fisier undeva in ~ (vezi print(vim.inspect(vim.opt.backupdir:get())) )
+-- vim.opt.backup = true
+-- vim.opt.backupdir.remove('.')
 
 -- LSP Server to use for PHP.
 -- Set to "intelephense" to use intelephense instead of phpactor.
