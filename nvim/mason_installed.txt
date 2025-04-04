@@ -1,0 +1,26 @@
+
+    ◍ docker-compose-language-service docker_compose_language_service
+    ◍ dockerfile-language-server dockerls
+    ◍ hadolint
+    ◍ intelephense
+    ◍ json-lsp jsonls
+    ◍ lua-language-server lua_ls
+    ◍ markdownlint
+    ◍ marksman
+    ◍ prettier
+    ◍ psalm
+    ◍ shfmt
+    ◍ stimulus-language-server stimulus_ls
+    ◍ stylua
+    ◍ tailwindcss-language-server tailwindcss
+    
+
+
+    Vim Lua Commands:
+
+    vim.lsp.buf.format()
+    
+
+
+# bash Commands
+hyperfine - benchmark Command
