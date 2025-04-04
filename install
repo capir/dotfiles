@@ -7,3 +7,13 @@ ln -s $DOTFILES/nvim $HOME/.config/nvim
 
 rm -rf $HOME/.config/kitty
 ln -s $DOTFILES/kitty $HOME/.config/kitty
+
+rm -rf $HOME/.tmux.conf
+rm -rf $HOME/.tmux/plugins
+ln -s $DOTFILES/tmux/tmux.conf $HOME/.tmux.conf
+ln -s $DOTFILES/tmux/plugins $HOME/.tmux/plugins
+
+mkdir -p $HOME/.local/bin
+rm -rf $HOME/.local/bin/ts
+ln -s $DOTFILES/scripts/ts $HOME/.local/bin/ts
+
