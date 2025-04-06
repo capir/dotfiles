@@ -3,11 +3,12 @@
 return {
   "vim-test/vim-test",
   keys = {
-    { "<Leader>tn", ":silent TestNearest<CR>" },
-    { "<Leader>tf", ":silent TestFile<CR>" },
-    { "<Leader>ts", ":silent TestSuite<CR>" },
-    { "<Leader>tl", ":silent TestLast<CR>" },
-    { "<Leader>tv", ":silent TestVisit<CR>" },
+    { "<leader>t", group = "Test" },
+    { "<Leader>tn", ":silent TestNearest<CR>", desc = "Test nearest" },
+    { "<Leader>tf", ":silent TestFile<CR>", desc = "Test file" },
+    { "<Leader>ts", ":silent TestSuite<CR>", desc = "Test Suite" },
+    { "<Leader>tl", ":silent TestLast<CR>", desc = "Test Last" },
+    { "<Leader>tv", ":silent TestVisit<CR>", desc = "Test Visit" },
   },
   dependencies = { "voldikss/vim-floaterm" },
   config = function()

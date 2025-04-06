@@ -24,6 +24,7 @@ require("lazy").setup({
     --     },
     --   },
     -- },
+    { import = "lazyvim.plugins.extras.coding.luasnip" },
     -- { import = "lazyvim.plugins.extras.editor.outline" },
     -- { import = "lazyvim.plugins.extras.lang.docker" },
     -- { import = "lazyvim.plugins.extras.lang.json" },

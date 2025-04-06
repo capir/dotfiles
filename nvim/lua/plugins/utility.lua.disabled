@@ -1,6 +1,7 @@
 return {
   {
     "eliasCVII/timew.nvim",
+    enabled = false,
     dependencies = {
       "MunifTanjim/nui.nvim",
     },

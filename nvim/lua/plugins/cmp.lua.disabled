@@ -18,7 +18,27 @@ return {
     local luasnip = require("luasnip")
     local lspkind = require("lspkind")
 
-    require("luasnip/loaders/from_snipmate").lazy_load()
+    require("luasnip/loaders/from_snipmate").lazy_load({ paths = { "~/.config/nvim/snippets" } })
+    -- Create a simple snippet for "puff"
+    luasnip.add_snippets("php", {
+      luasnip.snippet("puff", {
+        luasnip.text_node("puff_snippet_expansion_here"),
+      }),
+    })
+    print("loaded")
+
+    -- Define a command to expand a LuaSnip snippet
+    vim.api.nvim_create_user_command("ExpandPuffSnippet", function()
+      local luasnip = require("luasnip")
+      local snip = luasnip.snippets.php.puff -- Adjust this based on your snippet name
+
+      -- Check if the snippet exists and expand it
+      if snip then
+        luasnip.lsp_expand(snip)
+      else
+        print("Snippet 'puff' not found!")
+      end
+    end, {})
 
     local has_words_before = function()
       local line, col = unpack(vim.api.nvim_win_get_cursor(0))
