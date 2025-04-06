@@ -1,0 +1,86 @@
+# Servere
+alias tos='ssh tosWeb'
+alias tapi='ssh tapi'
+alias tapi_db='ssh tapi -L3307:192.168.1.103:3306 -N'
+
+alias pi='ssh pi'
+alias 19d='ssh 19d'
+alias dtc='ssh dtc'
+
+# artisan
+alias art='php artisan'
+alias dart='docker-compose exec tapp php artisan'
+alias dsart='docker-compose -f docker-compose-hibrid.yml exec app php artisan'
+alias dtst='dce tapp ./vendor/bin/phpunit --group unit2 --stop-on-failure'
+
+#local
+alias ick='ack -i --pager="less -R -S -X"'
+alias t='todo.sh'
+alias tm='todotxt-machine'
+alias icons_hide='defaults write com.apple.finder CreateDesktop false && killall Finder'
+alias icons_show='defaults write com.apple.finder CreateDesktop true && killall Finder'
+alias console='php ~/console/main.php'
+alias lll='ls -lah'
+
+#tools
+# Cum sa faci GIF Screencast
+# 1. cureti Desktopul de SSuri cu: ssclear
+# 2. faci cate un SS cu fiecare moment pe care-l vrei in gif
+# 3. cand esti gata faci gif cu: makegif (o sa-ti deschida automat GIFul in Chrome)
+# 4. daca vrei sa deschizi giful: gsopen
+# 5. ca sa-i dai un nume intuitiv: gsmv
+alias makegif='convert -resize 800 -delay 150 -loop 0 ~/Desktop/Screenshot\ 202*.png ~/Desktop/image.gif && gsopen'
+alias ssclear='rm ~/Desktop/Screenshot\ *'
+alias gsopen='open -a "Google Chrome" ~/Desktop/image.gif'
+alias gsmv='~/mvgifscast.sh'
+
+
+# Cum sa faci un ringtone
+# 1. convertesti audio in .m4r
+# afconvert -t m4af [option...] input_file [output_file.m4r]
+# 2. drag the new .m4r file into iTunes
+
+
+# Cum sa afli ce-ai comis intro anumita zi
+alias pontaj='git log --format=format:"%ai %aE %s" --author=catalin | grep'
+
+# Cum sa deschizi ceva in chrome
+alias chrome='open -a "Google Chrome"'
+
+# Afisare calendar cu data de azi
+alias cale='cal | grep -C 6 --color -e " $(date +%e)" -e "^$(date +%e)"'
+
+# Afișare vreme
+alias wttr='curl "http://ro.wttr.in/Bucuresti?0" --silent --max-time 3'
+
+alias fzfp='fzf --preview "bat --color=always --style=numbers --line-range=:500 {}" --height=40% --layout=reverse --info=inline --padding=1'
+ctags=/opt/homebrew/bin/ctags
+
+alias tw='timew'
+
+alias nvim_flush='rm -rf ~/.local/share/nvim && rm -rf ~/.local/state/nvim && rm -rf ~/.cache/nvim'
+
+
+# Ledger
+# General
+#
+# In order to have everything from the ecosystem readily available, you'll just
+# need to source the alias file. This is done automatically when using
+# tmux/tmuxinator. If you don't use tmuxinator *or* when opening a new window
+# inside the active tmux session, the following alias comes in handy:
+alias sl="cd ~/Documents/🤑/GSWL-private && source ~/Documents/🤑/GSWL-ecosystem/alias" # Start ledger
+alias psl="cd ~/Documents/🤑/ledger && source ~/Documents/🤑/GSWL-ecosystem/alias" # Start ledger
+
+# Tmux / Tmuxinator
+#
+# Define the alias to start any Ledger interaction. One would usually have a
+# decryption and/or mount command before starting the actual session (i.e.
+# decrypt /path/to/folder && tmux start).
+alias slt='tmux start GSWL-private' # Start Ledger Tmux
+alias pslt='tmux start ledger' # Start Ledger Tmux
+# Define the alias to stop any Ledger interaction. One would usually have an
+# umount and/or an encryption and/or a backup command afterwards (i.e. kill
+# tmux kill && encrypt /path/to/folder && backup /path/to/folder)
+alias klt='tmux kill-session -t GSWL-private' # Kill Ledger Tmux
+alias pklt='tmux kill-session -t ledger' # Kill Ledger Tmux
+alias crypto='java -jar ~/.bin/crypto.jar'

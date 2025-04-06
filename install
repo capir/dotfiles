@@ -17,3 +17,5 @@ mkdir -p $HOME/.local/bin
 rm -rf $HOME/.local/bin/ts
 ln -s $DOTFILES/scripts/ts $HOME/.local/bin/ts
 
+rm -rf $HOME/.aliases
+ln -s $DOTFILES/.aliases $HOME/.aliases
