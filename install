@@ -19,3 +19,6 @@ ln -s $DOTFILES/scripts/ts $HOME/.local/bin/ts
 
 rm -rf $HOME/.aliases
 ln -s $DOTFILES/.aliases $HOME/.aliases
+
+rm -rf $HOME/.config/phpactor
+ln -s $DOTFILES/phpactor $HOME/.config/phpactor
