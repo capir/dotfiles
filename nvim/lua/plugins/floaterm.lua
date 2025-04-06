@@ -1,3 +1,5 @@
+-- terminal in the floating/popup window.
+
 return {
   "voldikss/vim-floaterm",
   keys = {

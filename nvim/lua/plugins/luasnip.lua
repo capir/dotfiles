@@ -14,7 +14,7 @@ return {
           require("luasnip/loaders/from_snipmate").lazy_load()
         end,
       },
-      { "saadparwaiz1/cmp_luasnip" },
+      -- { "saadparwaiz1/cmp_luasnip" },
       {
         "hrsh7th/nvim-cmp",
         optional = true,

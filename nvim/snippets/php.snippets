@@ -28,3 +28,17 @@ snippet testa "test method (annotation)"
 	{
 		${0}
 	}
+
+snippet jd "dump json encoded data"
+	echo json_encode((array)$0);
+	echo "\n";
+	die;
+
+snippet pest "new pest test"
+	it('$1', function(){
+		// Arrange
+		$0
+		// Act
+
+		// Assert
+	});

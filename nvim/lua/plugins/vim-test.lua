@@ -27,7 +27,7 @@ return {
       function! FloatermStrategy(cmd)
         execute 'silent FloatermSend q'
         execute 'silent FloatermKill'
-        execute 'FloatermNew! '.a:cmd.' | less -X'
+        execute 'FloatermNew '.a:cmd.' | less -X'
       endfunction
 
       let g:test#custom_strategies = {'floaterm': function('FloatermStrategy')}
