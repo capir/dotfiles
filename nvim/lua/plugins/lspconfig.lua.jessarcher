@@ -1,4 +1,7 @@
 -- Language Server Protocol
+-- if true then
+--   return {}
+-- end
 
 return {
   "neovim/nvim-lspconfig",
@@ -37,7 +40,15 @@ return {
         --   vim.lsp.buf.inlay_hint(bufnr, true)
         -- end
       end,
-      capabilities = capabilities,
+      -- capabilities = capabilities,
+      settings = {
+        intelephense = {
+          licenceKey = "00FC006EHTDB9O",
+          -- environment = {
+          --   phpVersion = "7.0.33",
+          -- },
+        },
+      },
     })
 
     -- require('lspconfig').phpactor.setup({
@@ -76,7 +87,7 @@ return {
         --   vim.lsp.buf.inlay_hint(bufnr, true)
         -- end
       end,
-      capabilities = capabilities,
+      -- capabilities = capabilities,
     })
 
     require("lspconfig").ts_ls.setup({
@@ -225,21 +236,5 @@ return {
     vim.fn.sign_define("DiagnosticSignInfo", { text = "", texthl = "DiagnosticSignInfo" })
     vim.fn.sign_define("DiagnosticSignHint", { text = "", texthl = "DiagnosticSignHint" })
   end,
-  opts = {
-    servers = {
-      intelephense = {
-        init_options = {
-          licenceKey = "00FC006EHTDB9O4",
-        },
-        settings = {
-          intelephense = {
-            licenceKey = "00FC006EHTDB9O4",
-            environment = {
-              phpVersion = "7.0.33",
-            },
-          },
-        },
-      },
-    },
-  },
+  opts = {},
 }

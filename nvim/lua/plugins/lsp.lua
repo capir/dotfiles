@@ -14,15 +14,12 @@ return {
     opts = {
       servers = {
         intelephense = {
-          init_options = {
-            licenceKey = "00FC006EHTDB9O4",
-          },
           settings = {
             intelephense = {
               licenceKey = "00FC006EHTDB9O4",
-              environment = {
-                phpVersion = "7.0.33",
-              },
+              -- environment = {
+              --   phpVersion = "7.0.33",
+              -- },
             },
           },
         },
