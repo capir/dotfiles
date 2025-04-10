@@ -5,6 +5,7 @@
 vim.opt.incsearch = true
 vim.opt.title = true
 vim.opt.spell = true
+vim.opt.spelllang = "en,ro"
 vim.opt.scrolloff = 8 -- lines of context
 -- vim.g.loaded_ruby_provider = 0
 
