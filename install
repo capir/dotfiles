@@ -3,26 +3,27 @@
 DOTFILES="$(cd "$(dirname "$0")" && pwd)"
 COMPLETION_DIR="$HOME/.oh-my-zsh/completions"
 
-rm -rf $HOME/.config/nvim
-ln -s $DOTFILES/nvim $HOME/.config/nvim
+mkdir -p "$COMPLETION_DIR"
 
-rm -rf $HOME/.config/kitty
-ln -s $DOTFILES/kitty $HOME/.config/kitty
+# Add to fpath only if not already present
+typeset -U fpath
+if [[ ! "$fpath"[(r)$COMPLETION_DIR] ]]; then
+  fpath=("$COMPLETION_DIR" $fpath)
+fi
 
-rm -rf $HOME/.tmux.conf
-rm -rf $HOME/.tmux/plugins
-ln -s $DOTFILES/tmux/tmux.conf $HOME/.tmux.conf
-ln -s $DOTFILES/tmux/plugins $HOME/.tmux/plugins
+# Neovim config
+rm -rf "$HOME/.config/nvim"
+ln -s "$DOTFILES/nvim" "$HOME/.config/nvim"
 
-mkdir -p $HOME/.local/bin
-rm -rf $HOME/.local/bin/ts
-ln -s $DOTFILES/scripts/ts $HOME/.local/bin/ts
+# Kitty config
+rm -rf "$HOME/.config/kitty"
+ln -s "$DOTFILES/kitty" "$HOME/.config/kitty"
 
-rm -rf $HOME/.aliases
-ln -s $DOTFILES/.aliases $HOME/.aliases
+# Tmux config
+rm -rf "$HOME/.tmux.conf" "$HOME/.tmux/plugins"
+ln -s "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
+ln -s "$DOTFILES/tmux/plugins" "$HOME/.tmux/plugins"
 
-rm -rf $HOME/.config/phpactor
-ln -s $DOTFILES/phpactor $HOME/.config/phpactor
 # Local scripts
 mkdir -p "$HOME/.local/bin"
 
@@ -50,3 +51,10 @@ ln -s "$DOTFILES/scripts/syncWork.sh" "$HOME/.local/bin/syncWork"
 rm -rf "$HOME/.aliases"
 ln -s "$DOTFILES/.aliases" "$HOME/.aliases"
 
+# Phpactor config
+rm -rf "$HOME/.config/phpactor"
+ln -s "$DOTFILES/phpactor" "$HOME/.config/phpactor"
+
+# Zsh completion init
+autoload -Uz compinit
+compinit
