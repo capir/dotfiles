@@ -14,6 +14,7 @@ return {
           type = "source",
           alternate = {
             "tests/Unit/{}Test.php",
+            "tests/Integration/{}Test.php",
             "tests/Feature/{}Test.php",
           },
         },

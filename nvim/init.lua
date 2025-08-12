@@ -50,3 +50,27 @@ vim.api.nvim_create_user_command("CheckIntelephenseLicense", function()
     end
   end)
 end, {})
+
+vim.api.nvim_create_user_command("CheckOpenAIToken", function()
+  local token = vim.env.OPENAI_API_KEY
+  if not token or token == "" then
+    vim.notify("No OpenAI token found in vim.env.OPENAI_API_KEY", vim.log.levels.ERROR)
+    return
+  end
+
+  local curl = require("plenary.curl")
+  local res = curl.get("https://api.openai.com/v1/models", {
+    headers = {
+      ["Authorization"] = "Bearer " .. token,
+    },
+  })
+
+  if res.status == 200 then
+    vim.notify("✅ OpenAI API key is valid!", vim.log.levels.INFO)
+  else
+    vim.notify(
+      string.format("❌ OpenAI API key check failed!\nStatus: %s\nBody: %s", res.status, res.body),
+      vim.log.levels.ERROR
+    )
+  end
+end, { desc = "Check if OpenAI API token is valid" })

@@ -18,6 +18,14 @@ vim.keymap.set("i", ";;", "<Esc>A;<Esc>", { desc = "Append ; EOL", silent = true
 vim.keymap.set("i", ",,", "<Esc>A,<Esc>", { desc = "Append . EOL", silent = true })
 vim.keymap.set("n", "<Leader>,", ":nohl<CR>", { desc = "Clear search highlight", silent = true })
 
+vim.keymap.set("n", "<leader>fv", function()
+  require("telescope.builtin").find_files({
+    no_ignore = true,
+    hidden = true,
+    search_dirs = { "vendor" },
+  })
+end, { desc = "Find files in vendor/" })
+
 -- Disable arrow keys in Normal, Insert, and Visual modes
 vim.api.nvim_set_keymap("n", "<Up>", "<Nop>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<Down>", "<Nop>", { noremap = true, silent = true })
@@ -33,3 +41,21 @@ vim.api.nvim_set_keymap("v", "<Up>", "<Nop>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "<Down>", "<Nop>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "<Left>", "<Nop>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "<Right>", "<Nop>", { noremap = true, silent = true })
+
+vim.keymap.set("n", "<leader>o", function()
+  vim.api.nvim_create_autocmd("WinNew", {
+    callback = function()
+      local wins = vim.api.nvim_list_wins()
+      for _, win in ipairs(wins) do
+        local conf = vim.api.nvim_win_get_config(win)
+        if conf.relative ~= "" then
+          print("Window:", win)
+          print(vim.inspect(conf))
+        end
+      end
+    end,
+  })
+  print("test")
+
+  vim.cmd("PhpactorContextMenu")
+end)

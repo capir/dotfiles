@@ -63,6 +63,33 @@ return {
     init = function()
       vim.env.OPENAI_API_KEY = vim.fn.system("pass show api/token/openai"):gsub("%s+", "")
     end,
+    keys = {
+      {
+        "<leader>aba",
+        function()
+          local file = vim.fn.expand("%:p")
+          local state = require("avante.state")
+          if not vim.tbl_contains(state.files, file) then
+            table.insert(state.files, file)
+          end
+        end,
+        desc = "Avante Add current buffer",
+      },
+      {
+        "<leader>abr",
+        function()
+          local file = vim.fn.expand("%:p")
+          local state = require("avante.state")
+          for i, f in ipairs(state.files) do
+            if f == file then
+              table.remove(state.files, i)
+              break
+            end
+          end
+        end,
+        desc = "Avante Remove current buffer",
+      },
+    },
   },
   {
     "jackMort/ChatGPT.nvim",
