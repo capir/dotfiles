@@ -46,3 +46,7 @@ ln -sf "$DOTFILES/scripts/_invoice.sh" "$COMPLETION_DIR/_invoice"
 rm -rf "$HOME/.local/bin/syncWork"
 ln -s "$DOTFILES/scripts/syncWork.sh" "$HOME/.local/bin/syncWork"
 
+# Aliases
+rm -rf "$HOME/.aliases"
+ln -s "$DOTFILES/.aliases" "$HOME/.aliases"
+

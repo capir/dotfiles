@@ -33,6 +33,7 @@ alias makegif='convert -resize 800 -delay 150 -loop 0 ~/Desktop/Screenshot\ 202*
 alias ssclear='rm ~/Desktop/Screenshot\ *'
 alias gsopen='open -a "Google Chrome" ~/Desktop/image.gif'
 alias gsmv='~/mvgifscast.sh'
+alias vlc=/Applications/VLC.app/Contents/MacOS/VLC
 
 
 # Cum sa faci un ringtone
