@@ -1,6 +1,7 @@
-#!/bin/bash
+#!/bin/zsh
 
-DOTFILES=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
+DOTFILES="$(cd "$(dirname "$0")" && pwd)"
+COMPLETION_DIR="$HOME/.oh-my-zsh/completions"
 
 rm -rf $HOME/.config/nvim
 ln -s $DOTFILES/nvim $HOME/.config/nvim
@@ -22,3 +23,26 @@ ln -s $DOTFILES/.aliases $HOME/.aliases
 
 rm -rf $HOME/.config/phpactor
 ln -s $DOTFILES/phpactor $HOME/.config/phpactor
+# Local scripts
+mkdir -p "$HOME/.local/bin"
+
+rm -rf "$HOME/.local/bin/ts"
+ln -s "$DOTFILES/scripts/ts" "$HOME/.local/bin/ts"
+
+rm -rf "$HOME/.local/bin/invoice"
+ln -s "$DOTFILES/scripts/invoice.sh" "$HOME/.local/bin/invoice"
+
+rm -rf "$HOME/.local/bin/video_label"
+ln -s "$DOTFILES/scripts/video/label_video.sh" "$HOME/.local/bin/video_label"
+
+rm -rf "$HOME/.local/bin/video_stack"
+ln -s "$DOTFILES/scripts/video/stack_video.sh" "$HOME/.local/bin/video_stack"
+
+rm -rf "$HOME/.local/bin/video_info"
+ln -s "$DOTFILES/scripts/video/info_video.sh" "$HOME/.local/bin/video_info"
+
+ln -sf "$DOTFILES/scripts/_invoice.sh" "$COMPLETION_DIR/_invoice"
+
+rm -rf "$HOME/.local/bin/syncWork"
+ln -s "$DOTFILES/scripts/syncWork.sh" "$HOME/.local/bin/syncWork"
+
