@@ -57,7 +57,10 @@ alias wttr='curl "http://ro.wttr.in/Bucuresti?0" --silent --max-time 3'
 alias fzfp='fzf --preview "bat --color=always --style=numbers --line-range=:500 {}" --height=40% --layout=reverse --info=inline --padding=1'
 ctags=/opt/homebrew/bin/ctags
 
+# TimeWarrior shortcuts
 alias tw='timew'
+alias tww='tw week :ids; tw summary :week :ids'
+alias twm='tw month :ids; tw summary :month :ids'
 
 alias nvim_flush='rm -rf ~/.local/share/nvim && rm -rf ~/.local/state/nvim && rm -rf ~/.cache/nvim'
 

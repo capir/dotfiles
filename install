@@ -50,6 +50,11 @@ ln -s "$DOTFILES/scripts/syncWork.sh" "$HOME/.local/bin/syncWork"
 rm -rf "$HOME/.local/bin/pdfshrink"
 ln -s "$DOTFILES/scripts/pdfshrink.sh" "$HOME/.local/bin/pdfshrink"
 
+rm -rf "$HOME/.local/bin/tmux_timew_status"
+rm -rf "$HOME/.local/bin/tmux_timew_status_block"
+ln -s "$DOTFILES/scripts/tmux_timew_status.sh" "$HOME/.local/bin/tmux_timew_status"
+ln -s "$DOTFILES/scripts/tmux_timew_status_block.sh" "$HOME/.local/bin/tmux_timew_status_block"
+
 # Aliases
 rm -rf "$HOME/.aliases"
 ln -s "$DOTFILES/.aliases" "$HOME/.aliases"
