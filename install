@@ -55,6 +55,9 @@ rm -rf "$HOME/.local/bin/tmux_timew_status_block"
 ln -s "$DOTFILES/scripts/tmux_timew_status.sh" "$HOME/.local/bin/tmux_timew_status"
 ln -s "$DOTFILES/scripts/tmux_timew_status_block.sh" "$HOME/.local/bin/tmux_timew_status_block"
 
+rm -rf "$HOME/.local/bin/m"
+ln -s "$DOTFILES/scripts/mycli_pass.sh" "$HOME/.local/bin/m"
+
 # Aliases
 rm -rf "$HOME/.aliases"
 ln -s "$DOTFILES/.aliases" "$HOME/.aliases"
