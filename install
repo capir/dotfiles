@@ -24,6 +24,10 @@ rm -rf "$HOME/.tmux.conf" "$HOME/.tmux/plugins"
 ln -s "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
 ln -s "$DOTFILES/tmux/plugins" "$HOME/.tmux/plugins"
 
+# mycli config
+rm -rf "$HOME/.myclirc"
+ln -s "$DOTFILES/mycli/.myclirc" "$HOME/.myclirc"
+
 # Local scripts
 mkdir -p "$HOME/.local/bin"
 
