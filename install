@@ -28,6 +28,12 @@ ln -s "$DOTFILES/tmux/plugins" "$HOME/.tmux/plugins"
 rm -rf "$HOME/.myclirc"
 ln -s "$DOTFILES/mycli/.myclirc" "$HOME/.myclirc"
 
+# aider config
+rm -rf "$HOME/.aider.conf.yml"
+rm -rf "$HOME/.aider.model.settings.yml"
+ln -s "$DOTFILES/aider/config.yml" "$HOME/.aider.conf.yml"
+ln -s "$DOTFILES/aider/config.yml" "$HOME/.aider.model.settings.yml"
+
 # Local scripts
 mkdir -p "$HOME/.local/bin"
 

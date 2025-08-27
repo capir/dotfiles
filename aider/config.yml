@@ -1,0 +1,17 @@
+#############
+# Main model:
+
+## Specify the model to use for the main chat
+model: anthropic/claude-3-7-sonnet-20250219
+
+## Specify the model to use for editor tasks (default depends on --model)
+editor-model: gpt-4.1-mini
+
+## Enable caching of prompts (default: False)
+cache-prompts: true
+
+## Enable/disable auto commit of LLM changes (default: True)
+auto-commits: false
+
+## Use VI editing mode in the terminal (default: False)
+vim: true
