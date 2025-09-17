@@ -58,9 +58,8 @@ alias fzfp='fzf --preview "bat --color=always --style=numbers --line-range=:500 
 ctags=/opt/homebrew/bin/ctags
 
 # TimeWarrior shortcuts
-alias tw='timew'
-alias tww='tw week :ids; tw summary :week :ids'
-alias twm='tw month :ids; tw summary :month :ids'
+alias tww='timew week :ids; timew summary :week :ids :annotations'
+alias twm='timew month :ids; timew summary :month :ids :annotations'
 
 alias nvim_flush='rm -rf ~/.local/share/nvim && rm -rf ~/.local/state/nvim && rm -rf ~/.cache/nvim'
 
