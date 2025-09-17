@@ -68,6 +68,9 @@ ln -s "$DOTFILES/scripts/tmux_timew_status_block.sh" "$HOME/.local/bin/tmux_time
 rm -rf "$HOME/.local/bin/m"
 ln -s "$DOTFILES/scripts/mycli_pass.sh" "$HOME/.local/bin/m"
 
+rm -rf "$HOME/.local/bin/car_maintenance"
+ln -s "$DOTFILES/scripts/maintenance_tracker" "$HOME/.local/bin/car_maintenance"
+
 # Aliases
 rm -rf "$HOME/.aliases"
 ln -s "$DOTFILES/.aliases" "$HOME/.aliases"
