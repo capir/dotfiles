@@ -77,6 +77,9 @@ ln -s "$DOTFILES/scripts/finance/sold" "$HOME/.local/bin/fin_sold"
 rm -rf "$HOME/.local/bin/jview"
 ln -s "$DOTFILES/scripts/jview.sh" "$HOME/.local/bin/jview"
 
+rm -rf "$HOME/.local/bin/mgcli"
+ln -s "$DOTFILES/scripts/mgcli.sh" "$HOME/.local/bin/mgcli"
+
 # Aliases
 rm -rf "$HOME/.aliases"
 ln -s "$DOTFILES/.aliases" "$HOME/.aliases"
