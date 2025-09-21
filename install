@@ -71,6 +71,9 @@ ln -s "$DOTFILES/scripts/mycli_pass.sh" "$HOME/.local/bin/m"
 rm -rf "$HOME/.local/bin/car_maintenance"
 ln -s "$DOTFILES/scripts/maintenance_tracker" "$HOME/.local/bin/car_maintenance"
 
+rm -rf "$HOME/.local/bin/fin_sold"
+ln -s "$DOTFILES/scripts/finance/sold" "$HOME/.local/bin/fin_sold"
+
 # Aliases
 rm -rf "$HOME/.aliases"
 ln -s "$DOTFILES/.aliases" "$HOME/.aliases"
