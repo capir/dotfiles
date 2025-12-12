@@ -80,6 +80,9 @@ ln -s "$DOTFILES/scripts/jview.sh" "$HOME/.local/bin/jview"
 rm -rf "$HOME/.local/bin/mgcli"
 ln -s "$DOTFILES/scripts/mgcli.sh" "$HOME/.local/bin/mgcli"
 
+rm -rf "$HOME/.local/bin/timew-backup"
+ln -s "$DOTFILES/scripts/timew-backup" "$HOME/.local/bin/timew-backup"
+
 # Aliases
 rm -rf "$HOME/.aliases"
 ln -s "$DOTFILES/.aliases" "$HOME/.aliases"

@@ -1,0 +1,21 @@
+#!/bin/bash
+# Backup Timewarrior data to bearer repo
+
+WORKDIR="$HOME/.local/share/timewarrior"
+TIMESTAMP=$(date +%Y-%m-%d_%H%M)
+
+cd "$WORKDIR" || { echo "Timewarrior folder not found"; exit 1; }
+
+# Stage changes
+git add .
+
+# Commit if there are changes
+if ! git diff --cached --quiet; then
+    git commit -m "Timewarrior backup $TIMESTAMP"
+    echo "Committed backup at $TIMESTAMP"
+else
+    echo "No changes to commit"
+fi
+
+# Push to remote if configured
+git push origin main 2>/dev/null || true
