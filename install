@@ -1,15 +1,6 @@
 #!/bin/zsh
 
 DOTFILES="$(cd "$(dirname "$0")" && pwd)"
-COMPLETION_DIR="$HOME/.oh-my-zsh/completions"
-
-mkdir -p "$COMPLETION_DIR"
-
-# Add to fpath only if not already present
-typeset -U fpath
-if [[ ! "$fpath"[(r)$COMPLETION_DIR] ]]; then
-  fpath=("$COMPLETION_DIR" $fpath)
-fi
 
 # Neovim config
 rm -rf "$HOME/.config/nvim"
@@ -34,6 +25,10 @@ rm -rf "$HOME/.aider.model.settings.yml"
 ln -s "$DOTFILES/aider/config.yml" "$HOME/.aider.conf.yml"
 # ln -s "$DOTFILES/aider/config.yml" "$HOME/.aider.model.settings.yml"
 
+# zsh config
+rm -rf "$HOME/.zshrc"
+ln -s "$DOTFILES/zshrc" "$HOME/.zshrc"
+
 # Local scripts
 mkdir -p "$HOME/.local/bin"
 
@@ -51,8 +46,6 @@ ln -s "$DOTFILES/scripts/video/stack_video.sh" "$HOME/.local/bin/video_stack"
 
 rm -rf "$HOME/.local/bin/video_info"
 ln -s "$DOTFILES/scripts/video/info_video.sh" "$HOME/.local/bin/video_info"
-
-ln -sf "$DOTFILES/scripts/_invoice.sh" "$COMPLETION_DIR/_invoice"
 
 rm -rf "$HOME/.local/bin/syncWork"
 ln -s "$DOTFILES/scripts/syncWork.sh" "$HOME/.local/bin/syncWork"
@@ -82,6 +75,9 @@ ln -s "$DOTFILES/scripts/mgcli.sh" "$HOME/.local/bin/mgcli"
 
 rm -rf "$HOME/.local/bin/timew-backup"
 ln -s "$DOTFILES/scripts/timew-backup" "$HOME/.local/bin/timew-backup"
+
+rm -rf "$ZSH_CUSTOM"
+ln -s "$DOTFILES/omz_custom" "$ZSH_CUSTOM"
 
 # Aliases
 rm -rf "$HOME/.aliases"
