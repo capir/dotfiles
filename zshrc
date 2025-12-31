@@ -335,3 +335,6 @@ a() {
 export GOC_MAIN=~/private
 export GOC_PLAIN=~/secure
 export GOC_BACKUP="/Volumes/dav/Digi Cloud/private"
+
+# tooluri misto
+# remind  - calendarr programabil

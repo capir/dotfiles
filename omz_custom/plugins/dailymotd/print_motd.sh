@@ -6,3 +6,4 @@ echo "━━━━━━━━━━━━━━━━━━━━━━"
 echo "☀️  $(date '+%A, %d %B')"
 echo "━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
+remind $HOME/dotfiles/remind
