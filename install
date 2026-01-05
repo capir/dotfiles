@@ -15,6 +15,11 @@ rm -rf "$HOME/.tmux.conf" "$HOME/.tmux/plugins"
 ln -s "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
 ln -s "$DOTFILES/tmux/plugins" "$HOME/.tmux/plugins"
 
+# hledger config
+mkdir -p "$HOME/.config/hledger/"
+rm -rf "$HOME/.config/hledger/hledger.conf"
+ln -s "$DOTFILES/hledger/hledger.conf" "$HOME/.config/hledger/hledger.conf"
+
 # mycli config
 rm -rf "$HOME/.myclirc"
 ln -s "$DOTFILES/mycli/.myclirc" "$HOME/.myclirc"

@@ -162,7 +162,7 @@ eval "$(ticker completion zsh)"
 
 # finance path for Ledger 
 export FINANCE_PATH="${HOME}/Documents/🤑"
-export LEDGER_FILE="${FINANCE_PATH}/hledger/family.journal"
+export LEDGER_FILE="${HOME}/repos/personal_finance/all.journal"
 
 #eval "$(zoxide init --cmd cd zsh)"
 
