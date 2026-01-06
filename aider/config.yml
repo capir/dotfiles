@@ -18,7 +18,9 @@
 # Main model:
 
 ## Specify the model to use for the main chat
-model: "anthropic/claude-3-7-sonnet-20250219"
+#model: "anthropic/claude-3-7-sonnet-20250219"
+model: "openai/gpt-5"
+#editor-model: "gpt-4.1-mini"
 
 ########################
 # API Keys and settings:
@@ -105,7 +107,7 @@ model: "anthropic/claude-3-7-sonnet-20250219"
 #weak-model: xxx
 
 ## Specify the model to use for editor tasks (default depends on --model)
-editor-model: "gpt-4.1-mini"
+#editor-model: "gpt-4.1-mini"
 
 ## Specify the edit format for the editor model (default: depends on editor model)
 #editor-edit-format: xxx
@@ -159,7 +161,7 @@ cache-prompts: true
 # Output settings:
 
 ## Use colors suitable for a dark terminal background (default: False)
-#dark-mode: false
+dark-mode: true
 
 ## Use colors suitable for a light terminal background (default: False)
 #light-mode: false
