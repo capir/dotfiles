@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+
+# JOURNAL="$HOME/finance/main.journal"
+JOURNAL="$FINANCE_PATH/hledger/family.journal"
+
+echo "📅 $(date '+%Y-%m-%d')"
+echo "────────────────────────"
+
+echo "💰 Assets"
+hledger -f "$JOURNAL" bal assets
+
+echo
+echo "🍔 Eating out (this month)"
+hledger -f "$JOURNAL" bal expenses:food:eating_out -p thismonth --budget --pretty
+
+echo
+echo "📊 Budget overview (this month)"
+hledger -f "$JOURNAL" bal expenses -p thismonth --budget --pretty
+
+echo
+echo "🔥 Spent today"
+hledger -f "$JOURNAL" reg expenses -p today --pretty
+
+echo
+echo "📉 Cashflow (this month)"
+hledger -f "$JOURNAL" cashflow -p thismonth --pretty

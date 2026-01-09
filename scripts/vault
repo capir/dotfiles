@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ----------------------------
+# Environment variables needed
+# ----------------------------
+# GOC_MAIN   - main encrypted repo path
+# GOC_PLAIN  - plaintext mount point
+# GOC_BACKUP - colon-separated list of backup encrypted paths
+# Example:
+# export GOC_MAIN="/Volumes/a_encrypted"
+# export GOC_PLAIN="$HOME/plain"
+# export GOC_BACKUP="/Volumes/b1_encrypted:/Volumes/b2_encrypted"
+
+usage() {
+  cat <<EOF
+Usage: $0 [command]
+
+Commands:
+  m         Mount main encrypted repo to plaintext path
+  s         Sync main encrypted repo to available backup paths (best-effort)
+  u         Unmount plaintext and sync to available backup paths
+  -h|--help Show this help message
+
+Environment variables:
+  GOC_MAIN   - main encrypted repo path
+  GOC_PLAIN  - plaintext mount point
+  GOC_BACKUP - colon-separated list of backup encrypted paths
+
+Examples:
+  $0 m       # Mount main repo
+  $0 s       # Sync to mounted backups
+  $0 u       # Unmount and sync
+EOF
+  exit 0
+}
+
+# Check environment variables
+if [[ -z "${GOC_MAIN:-}" || -z "${GOC_PLAIN:-}" || -z "${GOC_BACKUP:-}" ]]; then
+  echo "Error: GOC_MAIN, GOC_PLAIN, and GOC_BACKUP must be set."
+  usage
+fi
+
+# Convert GOC_BACKUP to array
+IFS=':' read -r -a BACKUP_PATHS <<<"$GOC_BACKUP"
+
+mount_plain() {
+  if mount | grep -q "$GOC_PLAIN"; then
+    echo "Plain path $GOC_PLAIN is already mounted."
+    return
+  fi
+  echo "Mounting $GOC_MAIN → $GOC_PLAIN"
+  gocryptfs "$GOC_MAIN" "$GOC_PLAIN"
+}
+
+unmount_plain() {
+  if mount | grep -q "$GOC_PLAIN"; then
+    echo "Unmounting $GOC_PLAIN"
+    umount "$GOC_PLAIN" 2>/dev/null || fusermount -u "$GOC_PLAIN" 2>/dev/null || true
+  else
+    echo "$GOC_PLAIN is not mounted."
+  fi
+}
+
+sync_to_backups() {
+  # Only sync if backups exist and are mounted
+  for backup in "${BACKUP_PATHS[@]}"; do
+    if [[ -d "$backup" ]] && mount | grep -q "$backup"; then
+      echo "Syncing $GOC_MAIN → $backup"
+      rsync -av --delete "${GOC_MAIN}/" "${backup}/"
+    else
+      echo "Skipping $backup (not mounted or does not exist)"
+    fi
+  done
+}
+
+# ----------------------------
+# Main
+# ----------------------------
+case "${1:-}" in
+m)
+  mount_plain
+  ;;
+s)
+  # Only sync if plain path is unmounted
+  if mount | grep -q "$GOC_PLAIN"; then
+    echo "Plain path $GOC_PLAIN is mounted. Please unmount before sync."
+  else
+    sync_to_backups
+  fi
+  ;;
+u)
+  unmount_plain
+  #sync_to_backups
+  ;;
+-h | --help | "")
+  usage
+  ;;
+*)
+  echo "Unknown command: $1"
+  usage
+  ;;
+esac

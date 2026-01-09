@@ -1,0 +1,67 @@
+#!/usr/bin/env sh
+
+JOURNAL="$FINANCE_PATH/hledger/family.journal"
+OUT="$FINANCE_PATH/hledger/dashboard.html"
+DATE="$(date '+%Y-%m-%d %H:%M')"
+
+assets=$(hledger -f "$JOURNAL" bal assets)
+eatout=$(hledger -f "$JOURNAL" bal expenses:food:eating_out -p thismonth --budget --pretty)
+budget=$(hledger -f "$JOURNAL" bal expenses -p thismonth --budget --pretty)
+today=$(hledger -f "$JOURNAL" reg expenses -p today --pretty)
+cashflow=$(hledger -f "$JOURNAL" cashflow -p thismonth --pretty)
+
+cat >"$OUT" <<EOF
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finance Dashboard</title>
+<style>
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #0f1115;
+  color: #eaeaea;
+  margin: 1rem;
+}
+h1 { font-size: 1.4rem; }
+h2 { font-size: 1.1rem; margin-top: 1.5rem; }
+pre {
+  background: #181b22;
+  padding: 0.8rem;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+.warn { color: #ff6b6b; }
+.footer {
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+</style>
+</head>
+<body>
+
+<h1>💰 Finance Dashboard</h1>
+<div class="footer">Generated: $DATE</div>
+
+<h2>Assets</h2>
+<pre>$assets</pre>
+
+<h2>Eating out (this month)</h2>
+<pre>$eatout</pre>
+
+<h2>Budget overview (this month)</h2>
+<pre>$budget</pre>
+
+<h2>Spent today</h2>
+<pre>$today</pre>
+
+<h2>Cashflow (this month)</h2>
+<pre>$cashflow</pre>
+
+</body>
+</html>
+EOF
+
+echo "✓ Dashboard written to $OUT"
