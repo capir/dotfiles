@@ -37,7 +37,8 @@ beep_after_seconds = 0
 # psql, plain, simple, grid, fancy_grid, pipe, orgtbl, rst, mediawiki, html,
 # latex, latex_booktabs, textile, moinmoin, jira, vertical, tsv, csv.
 # Recommended: ascii
-table_format = ascii
+#table_format = ascii
+table_format = csv
 
 # Syntax coloring style. Possible values (many support the "-dark" suffix):
 # manni, igor, xcode, vim, autumn, vs, rrt, native, perldoc, borland, tango, emacs,
@@ -90,7 +91,8 @@ keyword_casing = auto
 enable_pager = True
 
 # Choose a specific pager
-pager = less -SFX
+#pager = less -SFX
+pager = tw --theme argonaut
 
 # Custom colors for the completion menu, toolbar, etc.
 [colors]
@@ -252,4 +254,5 @@ sail_root = mysql://root:password@127.0.0.1:3306/laravel
 tos_marsigli = mysql://marsigli_tos@127.0.0.1:3308/marsigli_tos
 tos_look = mysql://look_tos@127.0.0.1:3308/look_tos
 tos_hello = mysql://hello_tos@127.0.0.1:3308/hello_tos
+tos_root = mysql://root@127.0.0.1:3308/mysql
 # example_dsn = mysql://[user[:password]@][host][:port][/dbname]
