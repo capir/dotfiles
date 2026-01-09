@@ -1,11 +1,8 @@
 # dailymotd.plugin.zsh
 
-autoload -Uz add-zsh-hook
-add-zsh-hook precmd _daily_motd
+[[ -o interactive ]] || return
 
 function _daily_motd() {
-  add-zsh-hook -d precmd _daily_motd
-
   CACHE="$HOME/.cache/dailymotd"
   TODAY="$(date +%Y-%m-%d)"
 
@@ -18,6 +15,14 @@ function _daily_motd() {
     # delegate actual printing
     "$HOME/.oh-my-zsh/custom/plugins/dailymotd/print_motd.sh"
   fi
+}
+
+function p10k-after-init() {
+  _daily_motd
+}
+
+function p10k-after-init() {
+  echo "Powerlevel10k is ready, safe to print now!"
 }
 
 # Optional: helper to manually trigger
