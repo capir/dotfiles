@@ -87,3 +87,5 @@ alias pslt='tmux start ledger' # Start Ledger Tmux
 alias klt='tmux kill-session -t GSWL-private' # Kill Ledger Tmux
 alias pklt='tmux kill-session -t ledger' # Kill Ledger Tmux
 alias crypto='java -jar ~/.bin/crypto.jar'
+
+alias batj='bat --style=plain -l json'
