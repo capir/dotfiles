@@ -71,6 +71,7 @@ plugins=(
   pass 
   vi-mode 
   # timewarrior 
+  taskwarrior
   tmuxinator 
   ssh 
   zsh-autosuggestions
@@ -88,6 +89,7 @@ export PATH="vendor/bin:$PATH"
 # export PATH="$(brew --prefix homebrew/php/php56)/bin:$PATH"
 export PATH="bin:$PATH"
 export PATH="$PATH:$HOME/go/bin"
+export PATH="$PATH:$HOME/.cargo/bin"
 
 export PYTHONPATH=/usr/local/bin/python
 
