@@ -34,6 +34,16 @@ ln -s "$DOTFILES/aider/config.yml" "$HOME/.aider.conf.yml"
 rm -rf "$HOME/.zshrc"
 ln -s "$DOTFILES/zshrc" "$HOME/.zshrc"
 
+# taskwarrior config
+rm -rf "$HOME/.taskrc"
+ln -s "$DOTFILES/taskwarrior/taskrc" "$HOME/.taskrc"
+mkdir -p "$HOME/.config/taskopen"
+rm -rf "$HOME/.config/taskopen/taskopenrc"
+ln -s "$DOTFILES/taskwarrior/taskopenrc" "$HOME/.config/taskopen/taskopenrc"
+mkdir -p "$HOME/.config/bugwarrior"
+rm -rf "$HOME/.config/bugwarrior/bugwarriorrc"
+ln -s "$DOTFILES/taskwarrior/bugwarriorrc" "$HOME/.config/bugwarrior/bugwarriorrc"
+
 # Local scripts
 mkdir -p "$HOME/.local/bin"
 

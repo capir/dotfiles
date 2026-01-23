@@ -1,0 +1,19 @@
+[general]
+interactive = yes
+targets = dds_youtrack
+inline_links = False
+annotation_comments = True
+merge_annotations = False
+
+[notifications]
+notifications = true
+backend = applescript
+only_on_new_tasks = true
+
+[dds_youtrack]
+service = youtrack
+youtrack.host = dds.youtrack.cloud
+youtrack.login = capir
+youtrack.token = @oracle:use_keyring
+youtrack.query = for:me #Unresolved
+youtrack.tag_template = yt_{{tag|lower}}
