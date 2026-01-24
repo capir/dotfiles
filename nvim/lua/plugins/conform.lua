@@ -10,7 +10,7 @@ return {
       html = { "htmlbeautyfier" },
       lua = { "stylua" },
       markdown = { { "prettierd", "prettier" } },
-      php = { "pint" },
+      php = { "prettier", "pint" },
       typescript = { "eslint_d", stop_after_first = true },
       typescriptreact = { "eslint_d", stop_after_first = true },
     },

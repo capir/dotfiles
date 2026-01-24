@@ -42,20 +42,6 @@ vim.api.nvim_set_keymap("v", "<Down>", "<Nop>", { noremap = true, silent = true 
 vim.api.nvim_set_keymap("v", "<Left>", "<Nop>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "<Right>", "<Nop>", { noremap = true, silent = true })
 
-vim.keymap.set("n", "<leader>o", function()
-  vim.api.nvim_create_autocmd("WinNew", {
-    callback = function()
-      local wins = vim.api.nvim_list_wins()
-      for _, win in ipairs(wins) do
-        local conf = vim.api.nvim_win_get_config(win)
-        if conf.relative ~= "" then
-          print("Window:", win)
-          print(vim.inspect(conf))
-        end
-      end
-    end,
-  })
-  print("test")
-
-  vim.cmd("PhpactorContextMenu")
-end)
+vim.keymap.set("n", "<leader>cg", "<cmd>PhpactorContextMenu<CR>", {
+  desc = "Phpactor context menu",
+})
