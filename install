@@ -50,6 +50,9 @@ mkdir -p "$HOME/.local/bin"
 rm -rf "$HOME/.local/bin/ts"
 ln -s "$DOTFILES/scripts/ts" "$HOME/.local/bin/ts"
 
+rm -rf "$HOME/.local/bin/vimwiki-sync.sh"
+ln -s "$DOTFILES/scripts/vimwiki-sync.sh" "$HOME/.local/bin/vimwiki-sync.sh"
+
 rm -rf "$HOME/.local/bin/invoice"
 ln -s "$DOTFILES/scripts/invoice.sh" "$HOME/.local/bin/invoice"
 
