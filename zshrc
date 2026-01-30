@@ -90,6 +90,7 @@ export PATH="vendor/bin:$PATH"
 export PATH="bin:$PATH"
 export PATH="$PATH:$HOME/go/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
 export PYTHONPATH=/usr/local/bin/python
 
@@ -330,9 +331,33 @@ a() {
   aider "$@"
 }
 
+alias -s txt="bat"
+alias -s json="bat"
+
+alias -g B="| bat"
+alias -g C="| pbcopy"
+alias -g J="| jless"
+alias -g TJ="| tw -f json"
+alias -g FQ="| sqlformat -ask upper -"
+
 # export API_KEYs
 # export OPENAI_API_KEY=$(pass show api/token/openai)
 # export ANTHROPIC_API_KEY=$(pass show api/token/anthropic)
+
+__jq_view() {
+  local filter="$1"
+  shift
+
+  if [[ -f $1 ]]; then
+    jq "$filter" "$1"
+  else
+    jq "$filter"
+  fi
+}
+
+T-pak-1(){ __jq_view '[.data.offers[] | {hotel:.hotel.name,geo:.hotel.geography_id,room_label,mp_label,price:.price/100,currency}]'   "$@"; }
+T-pak-2(){ __jq_view '[.packages[]|{HotelId:.HotelInfo.HotelId,Destination,room:.HotelInfo.Rooms[0].Label,meal:.HotelInfo.MealPlans[0].Label,price:.Price.Gross}]'   "$@"; }
+T-etrip-pak-1(){ __jq_view '[.[] | {packageName,destination,hotel:.hotel.hotelName,room:.hotel.rooms,meal:.hotel.meals,price:.priceInfo.gross}]'   "$@"; }
 
 export GOC_MAIN=~/private
 export GOC_PLAIN=~/secure
@@ -340,3 +365,14 @@ export GOC_BACKUP="/Volumes/dav/Digi Cloud/private"
 
 # tooluri misto
 # remind  - calendarr programabil
+# aerc    - client email
+# YouPlot (Tools for plotting on the terminal)
+# progress  - Display/Monitor the progress of running coreutils.
+# errno     - Look up errno names and descriptions.
+# maigret   = Collect OSINT information about usernames across thousands of websites.
+
+
+
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
