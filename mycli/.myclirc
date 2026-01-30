@@ -37,7 +37,6 @@ beep_after_seconds = 0
 # psql, plain, simple, grid, fancy_grid, pipe, orgtbl, rst, mediawiki, html,
 # latex, latex_booktabs, textile, moinmoin, jira, vertical, tsv, csv.
 # Recommended: ascii
-#table_format = ascii
 table_format = csv
 
 # Syntax coloring style. Possible values (many support the "-dark" suffix):
@@ -92,7 +91,7 @@ enable_pager = True
 
 # Choose a specific pager
 #pager = less -SFX
-pager = tw --theme argonaut
+pager = sed '1{/^>/d;}' | tw --theme argonaut
 
 # Custom colors for the completion menu, toolbar, etc.
 [colors]
@@ -154,96 +153,12 @@ output.null = "#808080"
 
 # Favorite queries.
 [favorite_queries]
-hh2_tours_id_in = select * from hh2_tours where id in ($1);
-hh2_tour_points_by_id = "select t.id, t.name, tp.id, tp.name from hh2_tour_points_map as tp join hh2_tours as t on t.id=tp.tour_id where tp.id=$1;"
-hh2_tours_by_date = "select t.id, t.name, td.date from hh2_tour_dates as td join hh2_tours as t on t.id=td.tour_id where td.date='$1';"
-hh2_tours_by_point_id = "select t.id, t.name, tp.id, tp.name from hh2_tour_points_map as tp join hh2_tours as t on t.id=tp.tour_id where tp.id=5687;"
-hh2_tour_points_like_name = "select t.id tour_id, t.name tour_name, tp.id point_id, tp.name point_name from hh2_tour_points_map as tp join hh2_tours as t on t.id=tp.tour_id where tp.name like '%$1%';"
-hh2_tour_points_and_dest_like_name = "select t.id tour_id, t.name tour_name, tp.id point_id, tp.name point_name, td.id dest_id, td.name dest_name from hh2_tour_points_map as tp join hh2_tours as t on t.id=tp.tour_id join hh2_tour_destinations_map td on t.id=td.tour_id where tp.name like '%$1%' and td.name like '%$2%';"
-hh2_tour_points_and_date_like = '''SELECT t.id tour_id,
-       t.name tour_name,
-       tp.id point_id,
-       tp.name point_name,
-       td.id dest_id,
-       td.name dest_name,
-       tdt.`date`
-  FROM hh2_tour_points_map AS tp
-  JOIN hh2_tours AS t
-    ON t.id = tp.tour_id
-  JOIN hh2_tour_destinations_map td
-    ON t.id = td.tour_id
-  JOIN hh2_tour_dates tdt
-    ON t.id = tdt.tour_id
- WHERE tp.name like '%$1%'
-   AND tdt.date like '%$2%';'''
-hh2_tours_dest_by_id = " select * from hh2_tour_destinations where id=$1;"
-hh2_tours_dest_like_name = '''SELECT *
-  FROM hh2_tour_destinations
- WHERE name like '%$1%';'''
-pack_dates_where_depart_whereIn_supp = '''SELECT date, p.api_id,
-       name
-  FROM packages_departure_dates pdd
-  LEFT JOIN packages_departure_points pdp
-    ON pdd.package_id = pdp.package_id
-  LEFT JOIN packages p
-    ON pdd.package_id = p.id
- WHERE pdp.geography_id = $1
-   AND pdd.api_id IN ($2)
- GROUP BY date
- ORDER BY date;'''
-tos_basic_credentials = '''SELECT `key`, `value`
-  FROM dbconfig_settings
- WHERE `key` like 'travelApi%';'''
-hh2_tour_dest_where_id = '''SELECT *
-  FROM hh2_tour_destinations
- WHERE id = $1;'''
-hh2_tours_like_name = '''SELECT t.id,
-       t.name,
-       tp.name AS departure,
-       td.date
-  FROM hh2_tours t
-  LEFT JOIN hh2_tour_points_map tp
-    ON t.id = tp.tour_id
-  LEFT JOIN hh2_tour_dates td
-    ON t.id = td.tour_id
- WHERE t.name like '%$1%';'''
-hh2_tour_dates = '''SELECT *
-  FROM hh2_tour_dates
- WHERE tour_id = $1;'''
-hh2_tour_routes = '''SELECT t.id,
-       t.name,
-       tp.id,
-       tp.name,
-       td.id,
-       td.name
-  FROM hh2_tours t
-  LEFT JOIN hh2_tour_points_map tp
-    ON t.id = tp.tour_id
-  LEFT JOIN hh2_tour_destinations_map td
-    ON t.id = td.tour_id
- WHERE t.id = $1
- ORDER BY tp.name,
-          td.name;'''
-tapi_list_users = "select id, username from users;"
-tapi_list_user_permission = '''SELECT user_id,
-       api_id,
-       api_username,
-       api_password,
-       api_token,
-       extra,
-       can_book,
-       status
-  FROM apis_user_permisions
- WHERE user_id = $1;'''
-tapi_geo_w_name_like = '''SELECT *
-  FROM geography
- WHERE name like '%$1%''''
-tapi_insert_geo = '''INSERT INTO geography (parent_id, `name`, `type`, `level`)
-VALUES ($1, $2, $3, $4);'''
-tapi_pack_dep_dates_by_supp = '''SELECT DISTINCT date
-  FROM packages_departure_dates
- WHERE api_id = $1
- ORDER BY date;'''
+migrations                  = SELECT * FROM migrations;
+migration_make_last         = UPDATE migrations SET batch = 99999 WHERE migration = '$1';
+migration_set_batch         = UPDATE migrations SET batch = $2 WHERE migration = '$1';
+tapi_hotels_named_like      = SELECT id, uid, geography_id, api_id, external_api_id, external_api_code, name, code, class, created_at, updated_at, status, email, type, google_place_id, google_rating FROM hotels WHERE name LIKE '%$1%';
+tapi_hotels_ids_in          = SELECT id, uid, geography_id, api_id, external_api_id, external_api_code, name, code, class, created_at, updated_at, status, email, type, google_place_id, google_rating FROM hotels WHERE id IN ($1);
+tapi_tour_routes_where_api  = SELECT * FROM tours2_routes WHERE api_id = $1;
 
 # Use the -d option to reference a DSN.
 # Special characters in passwords and other strings can be escaped with URL encoding.

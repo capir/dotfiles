@@ -333,6 +333,7 @@ a() {
 
 alias -s txt="bat"
 alias -s json="bat"
+alias -s html="chrome"
 
 alias -g B="| bat"
 alias -g C="| pbcopy"
@@ -358,6 +359,8 @@ __jq_view() {
 T-pak-1(){ __jq_view '[.data.offers[] | {hotel:.hotel.name,geo:.hotel.geography_id,room_label,mp_label,price:.price/100,currency}]'   "$@"; }
 T-pak-2(){ __jq_view '[.packages[]|{HotelId:.HotelInfo.HotelId,Destination,room:.HotelInfo.Rooms[0].Label,meal:.HotelInfo.MealPlans[0].Label,price:.Price.Gross}]'   "$@"; }
 T-etrip-pak-1(){ __jq_view '[.[] | {packageName,destination,hotel:.hotel.hotelName,room:.hotel.rooms,meal:.hotel.meals,price:.priceInfo.gross}]'   "$@"; }
+T-etrip-tours-fetched(){ __jq_view '[.[] | { id, name, duration, accommodation, transport: (.transport | join(", ")), description, categories: (.categories | map(.name) | join(", ")), areas: (.areas | map(.name) | join(", ")), departureDates: (.departureDates | join(", ")), departurePoints: (.departurePoints | map("\(.id)|\(.name)") | join(", ")), destinations: (.destinations | map("\(.id)|\(.name)") | join(", ")), images: (.images | length) }]'   "$@"; }
+T-etrip-tours-search(){ __jq_view '[.[] | { price: (.priceInfo.gross), isBookable, id, name, description, duration, accommodation, description, destinations: (.destinations | map("\(.id)|\(.name)") | join(", ")), departurePoints: (.departurePoints | map("\(.id)|\(.name)") | join(", ")), categories: (.categories | map(.name) | join(", ")), areas: (.areas | map(.name) | join(", ")), dates: ((.dates // []) | map("\(.date)-\(.availability)") | join(", ")) }]'   "$@"; }
 
 export GOC_MAIN=~/private
 export GOC_PLAIN=~/secure
