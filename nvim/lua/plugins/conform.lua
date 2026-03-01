@@ -2,11 +2,14 @@
 
   return {
     "stevearc/conform.nvim",
+    init = function()
+      vim.api.nvim_create_autocmd("BufWritePre", {
+        callback = function(args)
+          require("conform").format({ bufnr = args.buf, timeout_ms = 500, lsp_format = "fallback" })
+        end,
+      })
+    end,
     opts = {
-      format_on_save = {
-        timeout_ms = 500,
-        lsp_format = "fallback",
-      },
       formatters_by_ft = {
         bash = { "beautysh" },
         css = { { "prettierd", "prettier" } },

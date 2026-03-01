@@ -21,7 +21,7 @@ return {
     events = { "BufWritePost", "BufReadPost", "InsertLeave" },
     linters_by_ft = {
       -- fish = { "fish" },
-      php = { "phpstan", "phpmd" },
+      php = { "phpstan" },
       -- Use the "*" filetype to run linters on all filetypes.
       -- ['*'] = { 'global linter' },
       -- Use the "_" filetype to run linters on filetypes that don't have other linters configured.
@@ -40,11 +40,6 @@ return {
       --     return vim.fs.find({ "selene.toml" }, { path = ctx.filename, upward = true })[1]
       --   end,
       -- },
-      phpmd = {
-        condition = function()
-          return vim.fn.executable("phpmd") == 1
-        end,
-      },
     },
   },
 }
