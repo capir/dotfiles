@@ -331,15 +331,24 @@ a() {
   aider "$@"
 }
 
-alias -s txt="bat"
-alias -s json="bat"
+xmlview() {
+  xmllint --format "$1" 2>/dev/null | xq 2>/dev/null | bat --language=xml
+}
+
 alias -s html="chrome"
+alias -s json="bat"
+alias -s log="less"
+alias -s txt="bat"
+alias -s xml="xmlview"
 
 alias -g B="| bat"
 alias -g C="| pbcopy"
-alias -g J="| jless"
+alias -g J="| jless --mode line -r"
 alias -g TJ="| tw -f json"
 alias -g FQ="| sqlformat -ask upper -"
+alias -g XL="| xmllint --format -"
+alias -g X2J="| xq -j J"
+alias -g XML="XL XQ B"
 
 # export API_KEYs
 # export OPENAI_API_KEY=$(pass show api/token/openai)
@@ -373,6 +382,13 @@ export GOC_BACKUP="/Volumes/dav/Digi Cloud/private"
 # progress  - Display/Monitor the progress of running coreutils.
 # errno     - Look up errno names and descriptions.
 # maigret   = Collect OSINT information about usernames across thousands of websites.
+# maigret   = Collect OSINT information about usernames across thousands of websites.
+# toipe     = Yet another typing test, but crab flavored.
+# ttyd     = Share a terminal or any command over the web.
+# jrnl     = A simple journal application.
+# witr     = Why is this running?
+# lolcat     = Put a rainbow in everything you `cat` to the console.
+# grex     = Generate `regex`s.
 
 
 
