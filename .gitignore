@@ -1,3 +1,4 @@
 .aider*
 remind/bdays.rem
 remind/tasks.rem
+nvim/.claude/settings.local.json
