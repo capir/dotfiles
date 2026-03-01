@@ -1,18 +1,22 @@
 -- Lightweight yet powerful formatter plugin for Neovim
 
-return {
-  "stevearc/conform.nvim",
-  opts = {
-    formatters_by_ft = {
-      bash = { "beautysh" },
-      css = { { "prettierd", "prettier" } },
-      javascript = { "eslint_d", stop_after_first = true },
-      html = { "htmlbeautyfier" },
-      lua = { "stylua" },
-      markdown = { { "prettierd", "prettier" } },
-      php = { "prettier", "pint" },
-      typescript = { "eslint_d", stop_after_first = true },
-      typescriptreact = { "eslint_d", stop_after_first = true },
+  return {
+    "stevearc/conform.nvim",
+    opts = {
+      format_on_save = {
+        timeout_ms = 500,
+        lsp_format = "fallback",
+      },
+      formatters_by_ft = {
+        bash = { "beautysh" },
+        css = { { "prettierd", "prettier" } },
+        javascript = { "eslint_d", stop_after_first = true },
+        html = { "htmlbeautyfier" },
+        lua = { "stylua" },
+        markdown = { { "prettierd", "prettier" } },
+        php = { "prettier", "pint" },
+        typescript = { "eslint_d", stop_after_first = true },
+        typescriptreact = { "eslint_d", stop_after_first = true },
+      },
     },
-  },
-}
+  }
