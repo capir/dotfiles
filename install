@@ -85,6 +85,9 @@ ln -s "$DOTFILES/scripts/maintenance_tracker" "$HOME/.local/bin/car_maintenance"
 rm -rf "$HOME/.local/bin/fin_sold"
 ln -s "$DOTFILES/scripts/finance/sold" "$HOME/.local/bin/fin_sold"
 
+rm -rf "$HOME/.local/bin/factcheck_video"
+ln -s "$DOTFILES/scripts/factcheck_video.sh" "$HOME/.local/bin/factcheck_video"
+
 rm -rf "$HOME/.local/bin/jview"
 ln -s "$DOTFILES/scripts/jview.sh" "$HOME/.local/bin/jview"
 
