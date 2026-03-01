@@ -40,3 +40,7 @@ uda.youtrackproject.label=YouTrack Project
 uda.youtracknumber.type=string
 uda.youtracknumber.label=YouTrack Project Issue Number
 # END Bugwarrior UDAs
+context.administrator.read=project:dds
+context.administrator.write=project:dds
+context.developer.read=project:TOSS or project:tapi
+context=developer
