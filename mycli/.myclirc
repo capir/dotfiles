@@ -159,6 +159,7 @@ migration_set_batch         = UPDATE migrations SET batch = $2 WHERE migration =
 tapi_hotels_named_like      = SELECT id, uid, geography_id, api_id, external_api_id, external_api_code, name, code, class, created_at, updated_at, status, email, type, google_place_id, google_rating FROM hotels WHERE name LIKE '%$1%';
 tapi_hotels_ids_in          = SELECT id, uid, geography_id, api_id, external_api_id, external_api_code, name, code, class, created_at, updated_at, status, email, type, google_place_id, google_rating FROM hotels WHERE id IN ($1);
 tapi_tour_routes_where_api  = SELECT * FROM tours2_routes WHERE api_id = $1;
+tos_basic_credentials       = SELECT * FROM dbconfig_settings WHERE `key` like 'travelApi%';
 
 # Use the -d option to reference a DSN.
 # Special characters in passwords and other strings can be escaped with URL encoding.
@@ -170,4 +171,5 @@ tos_marsigli = mysql://marsigli_tos@127.0.0.1:3308/marsigli_tos
 tos_look = mysql://look_tos@127.0.0.1:3308/look_tos
 tos_hello = mysql://hello_tos@127.0.0.1:3308/hello_tos
 tos_root = mysql://root@127.0.0.1:3308/mysql
+vilex_tos= mysql://vilex_tos@127.0.0.1:3309/vilex_tos
 # example_dsn = mysql://[user[:password]@][host][:port][/dbname]
