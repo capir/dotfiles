@@ -15,7 +15,8 @@ alias dtst='dce tapp ./vendor/bin/phpunit --group unit2 --stop-on-failure'
 
 #local
 alias ick='ack -i --pager="less -R -S -X"'
-alias t='todo.sh'
+# alias t='todo.sh'
+alias t='task'
 alias tm='todotxt-machine'
 alias icons_hide='defaults write com.apple.finder CreateDesktop false && killall Finder'
 alias icons_show='defaults write com.apple.finder CreateDesktop true && killall Finder'
