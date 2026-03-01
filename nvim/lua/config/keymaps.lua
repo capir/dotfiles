@@ -45,3 +45,6 @@ vim.api.nvim_set_keymap("v", "<Right>", "<Nop>", { noremap = true, silent = true
 vim.keymap.set("n", "<leader>cg", "<cmd>PhpactorContextMenu<CR>", {
   desc = "Phpactor context menu",
 })
+
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
