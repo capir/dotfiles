@@ -22,6 +22,9 @@ alias icons_hide='defaults write com.apple.finder CreateDesktop false && killall
 alias icons_show='defaults write com.apple.finder CreateDesktop true && killall Finder'
 alias console='php ~/console/main.php'
 alias lll='ls -lah'
+alias ls="eza --icons"
+alias ll="eza -la --icons --git"
+alias lt="eza --tree --level=2 --icons"
 
 #tools
 # Cum sa faci GIF Screencast

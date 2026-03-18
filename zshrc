@@ -335,9 +335,11 @@ xmlview() {
   xmllint --format "$1" 2>/dev/null | xq 2>/dev/null | bat --language=xml
 }
 
+alias -s csv="csvlens"
 alias -s html="chrome"
 alias -s json="bat"
-alias -s log="less"
+alias -s log="lnav"
+alias -s md="glow -p"
 alias -s txt="bat"
 alias -s xml="xmlview"
 
@@ -389,8 +391,15 @@ export GOC_BACKUP="/Volumes/dav/Digi Cloud/private"
 # witr     = Why is this running?
 # lolcat     = Put a rainbow in everything you `cat` to the console.
 # grex     = Generate `regex`s.
+# glow      - Render Markdown in the terminal.
+# llmfit    - 
 
 
+bindkey -s "\C-g" "\C-ahowto \C-j"
+
+function lk {
+  cd "$(walk "$@")"
+}
 
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
