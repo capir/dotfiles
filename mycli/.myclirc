@@ -91,7 +91,8 @@ enable_pager = True
 
 # Choose a specific pager
 #pager = less -SFX
-pager = sed '1{/^>/d;}' | tw --theme argonaut
+; pager = sed '1{/^>/d;}' | tw --theme argonaut
+pager = sed '1{/^>/d;}' | csvlens
 
 # Custom colors for the completion menu, toolbar, etc.
 [colors]
@@ -158,7 +159,9 @@ migration_make_last         = UPDATE migrations SET batch = 99999 WHERE migratio
 migration_set_batch         = UPDATE migrations SET batch = $2 WHERE migration = '$1';
 tapi_hotels_named_like      = SELECT id, uid, geography_id, api_id, external_api_id, external_api_code, name, code, class, created_at, updated_at, status, email, type, google_place_id, google_rating FROM hotels WHERE name LIKE '%$1%';
 tapi_hotels_ids_in          = SELECT id, uid, geography_id, api_id, external_api_id, external_api_code, name, code, class, created_at, updated_at, status, email, type, google_place_id, google_rating FROM hotels WHERE id IN ($1);
+tapi_package_routes_where_api  = SELECT * FROM package_routes WHERE api_id = $1;
 tapi_tour_routes_where_api  = SELECT * FROM tours2_routes WHERE api_id = $1;
+tapi_permission_by_api      = 'SELECT u.id, u.username, u.agency_name, p.id, api_username, api_password, extra FROM apis_user_permisions p INNER JOIN users u ON u.id = p.user_id WHERE api_id = $1;'
 tos_basic_credentials       = SELECT * FROM dbconfig_settings WHERE `key` like 'travelApi%';
 
 # Use the -d option to reference a DSN.
@@ -171,5 +174,6 @@ tos_marsigli = mysql://marsigli_tos@127.0.0.1:3308/marsigli_tos
 tos_look = mysql://look_tos@127.0.0.1:3308/look_tos
 tos_hello = mysql://hello_tos@127.0.0.1:3308/hello_tos
 tos_root = mysql://root@127.0.0.1:3308/mysql
-vilex_tos= mysql://vilex_tos@127.0.0.1:3309/vilex_tos
+tos_posada = mysql://posada_tos@127.0.0.1:3309/posada_tos
+tos_vilex = mysql://vilex_tos@127.0.0.1:3309/vilex_tos
 # example_dsn = mysql://[user[:password]@][host][:port][/dbname]
