@@ -100,6 +100,9 @@ ln -s "$DOTFILES/scripts/timew-backup" "$HOME/.local/bin/timew-backup"
 rm -rf "$HOME/.local/bin/decrypt-pdfs"
 ln -s "$DOTFILES/scripts/decrypt-pdfs.sh" "$HOME/.local/bin/decrypt-pdfs"
 
+rm -rf "$HOME/.local/bin/upload-commit"
+ln -s "$DOTFILES/scripts/upload-commit.sh" "$HOME/.local/bin/upload-commit"
+
 rm -rf "$ZSH_CUSTOM"
 ln -s "$DOTFILES/omz_custom" "$ZSH_CUSTOM"
 
