@@ -22,6 +22,23 @@ def parse_ticket(branch: str) -> str | None:
         return None
     return f"{m.group(1).upper()}-{m.group(2)}"
 
+def is_worktree(path: Path | None, cfg: "Config") -> bool:
+    if path is None:
+        return False
+    try:
+        path = path.resolve()
+    except OSError:
+        return False
+    if not (path / ".git").exists():
+        return False
+    for root in cfg.worktree_roots:
+        try:
+            path.relative_to(Path(root).resolve())
+            return True
+        except ValueError:
+            continue
+    return False
+
 @dataclass
 class Config:
     poll_interval_s: int = 5

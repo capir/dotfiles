@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time, os, json
 from pathlib import Path
-from timefocus import claude_signal, Config
+from timefocus import claude_signal, Config, is_worktree
 
 def _write_session(d: Path, cwd: str, mtime: float | None = None):
     d.mkdir(parents=True, exist_ok=True)
@@ -44,3 +44,22 @@ def test_claude_signal_finds_cwd_in_nested_uuid_subdir(tmp_path):
     f.write_text(json.dumps({"type":"x","cwd":"/some/project"}) + "\n")
     os.utime(f, (time.time() - 5, time.time() - 5))
     assert str(claude_signal(cfg, projects_root=projects)) == "/some/project"
+
+def test_is_worktree_under_root(tmp_path):
+    root = tmp_path / "code_base_api_bare"
+    wt = root / "toco"
+    wt.mkdir(parents=True)
+    (wt / ".git").write_text("gitdir: ...")  # git worktree marker
+    cfg = Config(worktree_roots=[str(root)])
+    assert is_worktree(wt, cfg) is True
+
+def test_is_worktree_outside_root_returns_false(tmp_path):
+    cfg = Config(worktree_roots=["/Users/c/work/TOS/code_base_api_bare"])
+    assert is_worktree(tmp_path / "other", cfg) is False
+
+def test_is_worktree_no_git_returns_false(tmp_path):
+    root = tmp_path / "root"
+    wt = root / "child"
+    wt.mkdir(parents=True)
+    cfg = Config(worktree_roots=[str(root)])
+    assert is_worktree(wt, cfg) is False
