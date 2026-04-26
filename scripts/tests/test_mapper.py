@@ -84,3 +84,13 @@ def test_map_returns_none_when_nothing_resolves(tmp_path):
     with patch("timefocus._git_branch", return_value="random"), \
          patch("timefocus.task_lookup_by_ticket", return_value=None):
         assert map_worktree_to_task(tmp_path, cfg, cache) is None
+
+def test_git_branch_treats_detached_HEAD_as_none(tmp_path):
+    from timefocus import _git_branch
+    import subprocess
+    from unittest.mock import patch, MagicMock
+    fake = MagicMock()
+    fake.returncode = 0
+    fake.stdout = "HEAD\n"
+    with patch("timefocus.subprocess.run", return_value=fake):
+        assert _git_branch(tmp_path) is None

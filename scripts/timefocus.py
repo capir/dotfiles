@@ -237,7 +237,10 @@ def _git_branch(wt: Path) -> str | None:
         return None
     if r.returncode != 0:
         return None
-    return r.stdout.strip() or None
+    out = r.stdout.strip()
+    if not out or out == "HEAD":
+        return None
+    return out
 
 def map_worktree_to_task(wt: Path, cfg: Config, cache: WorktreeCache) -> str | None:
     wt_key = str(wt.resolve())
