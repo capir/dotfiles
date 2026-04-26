@@ -418,6 +418,30 @@ def editor_signal(cfg: Config) -> Path | None:
         return None
     return p.resolve()
 
+@dataclass
+class State:
+    current_uuid: str | None = None
+    current_since: str | None = None
+    pending_target: str | None = None
+    pending_since: str | None = None
+
+def load_state(path: Path) -> State:
+    try:
+        data = _json.loads(path.read_text())
+        return State(**{k: data.get(k) for k in State.__dataclass_fields__})
+    except FileNotFoundError:
+        return State()
+    except (_json.JSONDecodeError, TypeError):
+        ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        path.replace(path.with_suffix(path.suffix + f".broken-{ts}"))
+        return State()
+
+def save_state(path: Path, state: State) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(_json.dumps(state.__dict__, indent=2))
+    tmp.replace(path)
+
 def resolve_focus(cfg: Config) -> Path | None:
     for fn in (claude_signal, terminal_signal, editor_signal):
         try:
