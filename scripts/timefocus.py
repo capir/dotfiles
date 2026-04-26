@@ -6,6 +6,7 @@ __version__ = "0.1.0"
 
 import json as _json
 import re
+import subprocess
 import time
 import tomllib
 from dataclasses import dataclass, field
@@ -167,6 +168,26 @@ def claude_signal(cfg: Config, projects_root: Path = CLAUDE_PROJECTS_ROOT) -> Pa
     if cwd is not None:
         return cwd
     return decode_claude_session_dir(best_dir.name)
+
+def _task_export(filter_expr: str) -> str:
+    r = subprocess.run(["task", "rc.json.array=on", filter_expr, "export"],
+                       capture_output=True, text=True, timeout=10)
+    return r.stdout if r.returncode == 0 else "[]"
+
+def task_lookup_by_ticket(ticket: str) -> str | None:
+    raw = _task_export(f"linearurl.contains:/{ticket}/")
+    try:
+        tasks = _json.loads(raw or "[]")
+    except _json.JSONDecodeError:
+        return None
+    pending = [t for t in tasks if t.get("status") == "pending"]
+    if pending:
+        pending.sort(key=lambda t: t.get("entry", ""), reverse=True)
+        return pending[0].get("uuid")
+    if tasks:
+        tasks.sort(key=lambda t: t.get("entry", ""), reverse=True)
+        return tasks[0].get("uuid")
+    return None
 
 def main(argv: list[str] | None = None) -> int:
     import sys
