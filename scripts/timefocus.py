@@ -4,11 +4,20 @@ from __future__ import annotations
 
 __version__ = "0.1.0"
 
+import re
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 
 DEFAULT_CONFIG_PATH = Path.home() / ".config" / "timefocus" / "config.toml"
+
+TICKET_RE = re.compile(r"(?i)\b(tos|toss)-(\d+)\b")
+
+def parse_ticket(branch: str) -> str | None:
+    m = TICKET_RE.search(branch or "")
+    if not m:
+        return None
+    return f"{m.group(1).upper()}-{m.group(2)}"
 
 @dataclass
 class Config:
