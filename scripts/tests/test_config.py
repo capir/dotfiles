@@ -10,7 +10,6 @@ def test_load_config_returns_defaults_when_no_file(tmp_path):
     assert cfg.min_chunk_s == 30
     assert cfg.claude_session_stale_s == 90
     assert cfg.worktree_roots == []
-    assert cfg.ticket_regex == r"(?i)\b(tos|toss)-(\d+)\b"
     assert cfg.bugwarrior_pull_throttle_s == 3600
     assert cfg.fallback_uuid_filename == ".task-uuid"
     assert cfg.log_level == "info"

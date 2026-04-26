@@ -104,8 +104,6 @@ class Config:
     min_chunk_s: int = 30
     claude_session_stale_s: int = 90
     worktree_roots: list[str] = field(default_factory=list)
-    ticket_regex: str = r"(?i)\b(tos|toss)-(\d+)\b"
-    linear_url_match: str = "/{ticket}/"
     bugwarrior_pull_throttle_s: int = 3600
     fallback_uuid_filename: str = ".task-uuid"
     log_level: str = "info"
@@ -404,25 +402,35 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--restart", action="store_true")
     args = ap.parse_args(argv)
 
-    if args.version: print(__version__); return 0
+    if args.version:
+        print(__version__)
+        return 0
     if args.help:
         print(ap.format_help())
         print("Run with --man for the full manual.")
         return 0
-    if args.man: print(MAN_TEXT); return 0
+    if args.man:
+        print(MAN_TEXT)
+        return 0
 
     cfg = load_config(CONFIG_PATH)
 
-    if args.status: _print_status(cfg); return 0
+    if args.status:
+        _print_status(cfg)
+        return 0
     if args.resolve:
         cache = WorktreeCache(_cache_path())
         uuid = map_worktree_to_task(Path(args.resolve), cfg, cache)
         print(uuid or "")
         return 0 if uuid else 1
-    if args.start: return cmd_start()
-    if args.stop: return cmd_stop()
-    if args.restart: return cmd_stop() or cmd_start()
-    if args.trim: return cmd_trim(cfg)
+    if args.start:
+        return cmd_start()
+    if args.stop:
+        return cmd_stop()
+    if args.restart:
+        return cmd_stop() or cmd_start()
+    if args.trim:
+        return cmd_trim(cfg)
     if args.once:
         tick_once(cfg, state_path=_state_path(), log_path=_log_path(),
                   cache_path=_cache_path(), dry_run=args.dry_run)
@@ -431,7 +439,8 @@ def main(argv: list[str] | None = None) -> int:
         run_daemon(cfg=cfg, state_path=_state_path(), log_path=_log_path(),
                    cache_path=_cache_path(), dry_run=args.dry_run)
         return 0
-    print(ap.format_help()); return 2
+    print(ap.format_help())
+    return 2
 
 def _cgsession_dict() -> dict | None:
     try:
