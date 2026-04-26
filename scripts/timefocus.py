@@ -10,7 +10,7 @@ import subprocess
 import time
 import tomllib
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 DEFAULT_CONFIG_PATH = Path.home() / ".config" / "timefocus" / "config.toml"
@@ -461,6 +461,47 @@ def compute_desired(cfg: Config, state: State, *, locked: bool, idle_s: int,
     if state.current_uuid:
         return ("ACTIVE", state.current_uuid)
     return ("PAUSED", None)
+
+@dataclass
+class Action:
+    kind: str  # NOOP | START | STOP | SWITCH
+    target_uuid: str | None
+    new_state: State
+
+def _parse_iso(s: str) -> datetime:
+    return datetime.fromisoformat(s)
+
+def transition(cfg: Config, state: State, *, desired: tuple, now_iso: str) -> Action:
+    kind, target = desired
+    cur = state.current_uuid
+    # current matches desired
+    if kind == "ACTIVE" and target == cur:
+        ns = State(current_uuid=cur, current_since=state.current_since,
+                   pending_target=None, pending_since=None)
+        return Action("NOOP", None, ns)
+    # paused
+    if kind == "PAUSED":
+        if cur is None:
+            return Action("NOOP", None, State())
+        return Action("STOP", cur, State())
+    # ACTIVE with new target, nothing currently running
+    if kind == "ACTIVE" and cur is None:
+        ns = State(current_uuid=target, current_since=now_iso)
+        return Action("START", target, ns)
+    # ACTIVE switching uuid: debounce
+    if kind == "ACTIVE" and cur is not None and target != cur:
+        if state.pending_target == target and state.pending_since:
+            elapsed = _parse_iso(now_iso) - _parse_iso(state.pending_since)
+            if elapsed >= timedelta(seconds=cfg.switch_debounce_s):
+                ns = State(current_uuid=target, current_since=now_iso)
+                return Action("SWITCH", target, ns)
+            ns = State(current_uuid=cur, current_since=state.current_since,
+                       pending_target=target, pending_since=state.pending_since)
+            return Action("NOOP", None, ns)
+        ns = State(current_uuid=cur, current_since=state.current_since,
+                   pending_target=target, pending_since=now_iso)
+        return Action("NOOP", None, ns)
+    return Action("NOOP", None, state)
 
 def resolve_focus(cfg: Config) -> Path | None:
     for fn in (claude_signal, terminal_signal, editor_signal):
