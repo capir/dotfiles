@@ -7,6 +7,7 @@ __version__ = "0.1.0"
 import json as _json
 import re
 import subprocess
+import threading
 import time
 import tomllib
 from dataclasses import dataclass, field
@@ -553,6 +554,19 @@ def tick_once(cfg: Config, *, state_path: Path, log_path: Path,
         "current": state.current_uuid, "desired": list(desired),
         "action": action.kind, "dry_run": dry_run,
     })
+
+def run_daemon(*, cfg: Config, state_path: Path, log_path: Path,
+               cache_path: Path, dry_run: bool,
+               stop_event: threading.Event | None = None) -> None:
+    stop_event = stop_event or threading.Event()
+    while not stop_event.is_set():
+        try:
+            tick_once(cfg, state_path=state_path, log_path=log_path,
+                      cache_path=cache_path, dry_run=dry_run)
+        except Exception as e:
+            log_decision(log_path, {"t": datetime.now(timezone.utc).isoformat(),
+                                    "error": repr(e)})
+        stop_event.wait(cfg.poll_interval_s)
 
 if __name__ == "__main__":
     raise SystemExit(main())

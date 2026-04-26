@@ -128,3 +128,25 @@ def test_tick_once_paused_to_active(tmp_path):
                   cache_path=cache_path, dry_run=False)
     from timefocus import load_state
     assert load_state(state_path).current_uuid == "uuid-1"
+
+import threading, time as _time
+
+def test_daemon_runs_and_stops_on_signal(tmp_path):
+    from timefocus import run_daemon
+    cfg = Config(poll_interval_s=1, worktree_roots=[str(tmp_path)])
+    state_path = tmp_path / "s.json"
+    with patch("timefocus.is_locked", return_value=False), \
+         patch("timefocus.idle_seconds", return_value=0), \
+         patch("timefocus.resolve_focus", return_value=None), \
+         patch("timefocus._task_cmd"):
+        stop = threading.Event()
+        t = threading.Thread(target=run_daemon, kwargs=dict(
+            cfg=cfg, state_path=state_path,
+            log_path=tmp_path/"log.jsonl",
+            cache_path=tmp_path/"wt.json",
+            dry_run=True, stop_event=stop))
+        t.start()
+        _time.sleep(0.2)
+        stop.set()
+        t.join(timeout=3)
+        assert not t.is_alive()
