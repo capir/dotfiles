@@ -276,5 +276,18 @@ def main(argv: list[str] | None = None) -> int:
     print("timefocus: not yet implemented", file=sys.stderr)
     return 2
 
+def _cgsession_dict() -> dict | None:
+    try:
+        from Quartz import CGSessionCopyCurrentDictionary  # type: ignore
+    except ImportError:
+        return None
+    return CGSessionCopyCurrentDictionary()
+
+def is_locked() -> bool:
+    d = _cgsession_dict()
+    if not d:
+        return False
+    return bool(d.get("CGSSessionScreenIsLocked", False))
+
 if __name__ == "__main__":
     raise SystemExit(main())
