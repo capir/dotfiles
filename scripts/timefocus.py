@@ -418,5 +418,15 @@ def editor_signal(cfg: Config) -> Path | None:
         return None
     return p.resolve()
 
+def resolve_focus(cfg: Config) -> Path | None:
+    for fn in (claude_signal, terminal_signal, editor_signal):
+        try:
+            p = fn(cfg)
+        except Exception:
+            p = None
+        if p is not None:
+            return p
+    return None
+
 if __name__ == "__main__":
     raise SystemExit(main())

@@ -120,3 +120,26 @@ def test_editor_signal_jetbrains_returns_recent_project(tmp_path):
 def test_editor_signal_none_when_not_editor():
     with patch("timefocus._frontmost_app", return_value="Slack"):
         assert editor_signal(Config()) is None
+
+from timefocus import resolve_focus
+
+def test_resolve_focus_prefers_claude_over_terminal():
+    cfg = Config()
+    with patch("timefocus.claude_signal", return_value=Path("/a")), \
+         patch("timefocus.terminal_signal", return_value=Path("/b")), \
+         patch("timefocus.editor_signal", return_value=Path("/c")):
+        assert resolve_focus(cfg) == Path("/a")
+
+def test_resolve_focus_falls_through_to_editor():
+    cfg = Config()
+    with patch("timefocus.claude_signal", return_value=None), \
+         patch("timefocus.terminal_signal", return_value=None), \
+         patch("timefocus.editor_signal", return_value=Path("/c")):
+        assert resolve_focus(cfg) == Path("/c")
+
+def test_resolve_focus_none_when_all_none():
+    cfg = Config()
+    with patch("timefocus.claude_signal", return_value=None), \
+         patch("timefocus.terminal_signal", return_value=None), \
+         patch("timefocus.editor_signal", return_value=None):
+        assert resolve_focus(cfg) is None
