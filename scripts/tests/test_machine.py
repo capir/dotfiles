@@ -68,3 +68,24 @@ def test_pending_target_changes_resets_debounce():
     assert a.kind == "NOOP"
     assert a.new_state.pending_target == "z"
     assert a.new_state.pending_since == "2026-04-26T08:00:10+00:00"
+
+def test_returning_to_current_clears_pending():
+    """Invariant: NOOP same-target must wipe stale pending fields."""
+    cfg = Config(switch_debounce_s=30)
+    s = State(current_uuid="x", current_since="t0",
+              pending_target="y", pending_since="2026-04-26T08:00:00+00:00")
+    a = transition(cfg, s, desired=("ACTIVE", "x"), now_iso="2026-04-26T08:00:10+00:00")
+    assert a.kind == "NOOP"
+    assert a.new_state.pending_target is None
+    assert a.new_state.pending_since is None
+
+def test_idle_at_threshold_keeps_active_strict_greater():
+    """idle_s == idle_threshold_s is NOT idle (strict greater-than). Pin behavior."""
+    cfg = Config(idle_threshold_s=300)
+    d = compute_desired(cfg, State(current_uuid="x"), locked=False, idle_s=300,
+                        focus_uuid="y")
+    assert d == ("ACTIVE", "y")
+    # one tick later, threshold breached
+    d = compute_desired(cfg, State(current_uuid="x"), locked=False, idle_s=301,
+                        focus_uuid="y")
+    assert d == ("PAUSED", None)
