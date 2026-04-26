@@ -53,9 +53,19 @@ def test_is_worktree_under_root(tmp_path):
     cfg = Config(worktree_roots=[str(root)])
     assert is_worktree(wt, cfg) is True
 
-def test_is_worktree_outside_root_returns_false(tmp_path):
-    cfg = Config(worktree_roots=["/Users/c/work/TOS/code_base_api_bare"])
-    assert is_worktree(tmp_path / "other", cfg) is False
+def test_is_worktree_has_git_but_outside_root_returns_false(tmp_path):
+    other = tmp_path / "elsewhere"
+    other.mkdir()
+    (other / ".git").write_text("gitdir: ...")
+    cfg = Config(worktree_roots=[str(tmp_path / "configured_root")])
+    assert is_worktree(other, cfg) is False
+
+def test_is_worktree_canonical_git_dir(tmp_path):
+    root = tmp_path / "r"
+    wt = root / "repo"
+    (wt / ".git").mkdir(parents=True)
+    cfg = Config(worktree_roots=[str(root)])
+    assert is_worktree(wt, cfg) is True
 
 def test_is_worktree_no_git_returns_false(tmp_path):
     root = tmp_path / "root"
