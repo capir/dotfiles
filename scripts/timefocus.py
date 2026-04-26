@@ -353,8 +353,39 @@ def cmd_stop() -> int:
     return r.returncode
 
 
+_INC_RE = re.compile(r"^inc (\d{8}T\d{6}Z)\s*-\s*(\d{8}T\d{6}Z)")
+
+
+def _parse_timew_ts(s: str) -> datetime:
+    return datetime.strptime(s, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
+
+
+def trim_intervals_text(text: str, *, cfg: Config) -> tuple:
+    kept, dropped = [], 0
+    for line in text.splitlines():
+        m = _INC_RE.match(line)
+        if m:
+            dt = (_parse_timew_ts(m.group(2)) - _parse_timew_ts(m.group(1))).total_seconds()
+            if dt < cfg.min_chunk_s:
+                dropped += 1
+                continue
+        kept.append(line)
+    return "\n".join(kept) + ("\n" if text.endswith("\n") else ""), dropped
+
+
 def cmd_trim(cfg: Config) -> int:
-    return 0  # implemented in Task 21
+    data_dir = Path.home() / ".local" / "share" / "timewarrior" / "data"
+    yesterday = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m")
+    changed = 0
+    for p in data_dir.glob(f"{yesterday}.data"):
+        orig = p.read_text()
+        new, dropped = trim_intervals_text(orig, cfg=cfg)
+        if dropped:
+            p.with_suffix(p.suffix + ".bak").write_text(orig)
+            p.write_text(new)
+            changed += dropped
+    print(f"trimmed {changed} intervals shorter than {cfg.min_chunk_s}s")
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
