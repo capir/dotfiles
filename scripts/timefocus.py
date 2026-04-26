@@ -10,6 +10,7 @@ import subprocess
 import time
 import tomllib
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 
 DEFAULT_CONFIG_PATH = Path.home() / ".config" / "timefocus" / "config.toml"
@@ -188,6 +189,45 @@ def task_lookup_by_ticket(ticket: str) -> str | None:
         tasks.sort(key=lambda t: t.get("entry", ""), reverse=True)
         return tasks[0].get("uuid")
     return None
+
+class WorktreeCache:
+    def __init__(self, path: Path):
+        self.path = path
+        self._data = self._load()
+
+    def _load(self) -> dict:
+        try:
+            return _json.loads(self.path.read_text())
+        except (OSError, _json.JSONDecodeError):
+            return {}
+
+    def _save(self) -> None:
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = self.path.with_suffix(".tmp")
+        tmp.write_text(_json.dumps(self._data, indent=2))
+        tmp.replace(self.path)
+
+    def get(self, wt: str, current_branch: str | None = None) -> dict | None:
+        e = self._data.get(wt)
+        if not e:
+            return None
+        if current_branch is not None and e.get("branch") != current_branch:
+            return None
+        return e
+
+    def put(self, wt: str, *, branch: str, ticket: str | None, uuid: str) -> None:
+        self._data[wt] = {
+            "branch": branch,
+            "ticket": ticket,
+            "uuid": uuid,
+            "resolved_at": datetime.now(timezone.utc).isoformat(),
+        }
+        self._save()
+
+    def invalidate(self, wt: str) -> None:
+        self._data.pop(wt, None)
+        self._save()
+
 
 def main(argv: list[str] | None = None) -> int:
     import sys
