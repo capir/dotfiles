@@ -5,11 +5,13 @@ from __future__ import annotations
 __version__ = "0.1.0"
 
 import re
+import time
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 
 DEFAULT_CONFIG_PATH = Path.home() / ".config" / "timefocus" / "config.toml"
+CLAUDE_PROJECTS_ROOT = Path.home() / ".claude" / "projects"
 
 TICKET_RE = re.compile(r"(?i)\b(tos|toss)-(\d+)\b")
 
@@ -43,6 +45,75 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> Config:
         if hasattr(cfg, k):
             setattr(cfg, k, v)
     return cfg
+
+def decode_claude_session_dir(name: str) -> Path | None:
+    """Decode a Claude projects session directory name back to a filesystem path.
+
+    Claude encodes the project path by replacing slashes with dashes.
+    We reconstruct the real path by greedily matching tokens against the
+    actual filesystem, so path components containing dashes (e.g. ``geo-photos``)
+    are correctly distinguished from path separators.
+    """
+    if not name.startswith("-"):
+        return None
+    tokens = name[1:].split("-")
+    current = Path("/")
+    i = 0
+    while i < len(tokens):
+        # Try to consume as many tokens as possible that form a real entry name.
+        # Prefer longer matches (more dashes consumed) over shorter ones.
+        matched: Path | None = None
+        match_end = i
+        for j in range(len(tokens), i, -1):
+            candidate = "_".join(tokens[i:j])  # first try with underscores (unlikely)
+            if (current / candidate).exists():
+                matched = current / candidate
+                match_end = j
+                break
+            candidate = "-".join(tokens[i:j])  # try with dashes preserved
+            if (current / candidate).exists():
+                matched = current / candidate
+                match_end = j
+                break
+        if matched is None:
+            # Fallback: treat each token as one path component
+            current = current / tokens[i]
+            i += 1
+        else:
+            current = matched
+            i = match_end
+    return current
+
+def _latest_jsonl_mtime(d: Path) -> float:
+    best = 0.0
+    try:
+        for p in d.iterdir():
+            if p.suffix == ".jsonl":
+                try:
+                    m = p.stat().st_mtime
+                    if m > best:
+                        best = m
+                except OSError:
+                    pass
+    except OSError:
+        pass
+    return best
+
+def claude_signal(cfg: Config, projects_root: Path = CLAUDE_PROJECTS_ROOT) -> Path | None:
+    if not projects_root.exists():
+        return None
+    best_dir, best_mtime = None, 0.0
+    for entry in projects_root.iterdir():
+        if not entry.is_dir():
+            continue
+        m = _latest_jsonl_mtime(entry)
+        if m > best_mtime:
+            best_mtime, best_dir = m, entry
+    if best_dir is None:
+        return None
+    if time.time() - best_mtime > cfg.claude_session_stale_s:
+        return None
+    return decode_claude_session_dir(best_dir.name)
 
 def main(argv: list[str] | None = None) -> int:
     import sys
