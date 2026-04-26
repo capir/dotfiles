@@ -47,3 +47,40 @@ def test_cache_corrupt_file_starts_empty(tmp_path):
     p.write_text("not json {")
     c = WorktreeCache(p)
     assert c.get("/a") is None
+
+from pathlib import Path
+from unittest.mock import patch
+from timefocus import map_worktree_to_task, Config
+
+def test_map_uses_branch_parse_then_lookup(tmp_path):
+    cache = WorktreeCache(tmp_path / "c.json")
+    cfg = Config()
+    with patch("timefocus._git_branch", return_value="catalin/tos-9-foo"), \
+         patch("timefocus.task_lookup_by_ticket", return_value="uuid-9"):
+        assert map_worktree_to_task(tmp_path, cfg, cache) == "uuid-9"
+    # cached now
+    assert cache.get(str(tmp_path.resolve()), current_branch="catalin/tos-9-foo")["uuid"] == "uuid-9"
+
+def test_map_uses_cache_on_second_call(tmp_path):
+    cache = WorktreeCache(tmp_path / "c.json")
+    cfg = Config()
+    with patch("timefocus._git_branch", return_value="catalin/tos-9-foo"), \
+         patch("timefocus.task_lookup_by_ticket", return_value="uuid-9") as look:
+        map_worktree_to_task(tmp_path, cfg, cache)
+        map_worktree_to_task(tmp_path, cfg, cache)
+        assert look.call_count == 1
+
+def test_map_falls_back_to_dotfile_when_lookup_fails(tmp_path):
+    cache = WorktreeCache(tmp_path / "c.json")
+    (tmp_path / ".task-uuid").write_text("uuid-fb\n")
+    cfg = Config()
+    with patch("timefocus._git_branch", return_value="random-branch"), \
+         patch("timefocus.task_lookup_by_ticket", return_value=None):
+        assert map_worktree_to_task(tmp_path, cfg, cache) == "uuid-fb"
+
+def test_map_returns_none_when_nothing_resolves(tmp_path):
+    cache = WorktreeCache(tmp_path / "c.json")
+    cfg = Config()
+    with patch("timefocus._git_branch", return_value="random"), \
+         patch("timefocus.task_lookup_by_ticket", return_value=None):
+        assert map_worktree_to_task(tmp_path, cfg, cache) is None

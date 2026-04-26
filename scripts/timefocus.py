@@ -229,6 +229,41 @@ class WorktreeCache:
         self._save()
 
 
+def _git_branch(wt: Path) -> str | None:
+    try:
+        r = subprocess.run(["git", "-C", str(wt), "rev-parse", "--abbrev-ref", "HEAD"],
+                           capture_output=True, text=True, timeout=5)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if r.returncode != 0:
+        return None
+    return r.stdout.strip() or None
+
+def map_worktree_to_task(wt: Path, cfg: Config, cache: WorktreeCache) -> str | None:
+    wt_key = str(wt.resolve())
+    branch = _git_branch(wt)
+    if branch:
+        cached = cache.get(wt_key, current_branch=branch)
+        if cached:
+            return cached["uuid"]
+    ticket = parse_ticket(branch or "")
+    uuid = None
+    if ticket:
+        uuid = task_lookup_by_ticket(ticket)
+    if uuid:
+        if branch:
+            cache.put(wt_key, branch=branch, ticket=ticket, uuid=uuid)
+        return uuid
+    fb = wt / cfg.fallback_uuid_filename
+    if fb.exists():
+        fb_uuid = fb.read_text().strip()
+        if fb_uuid:
+            if branch:
+                cache.put(wt_key, branch=branch, ticket=ticket, uuid=fb_uuid)
+            return fb_uuid
+    return None
+
+
 def main(argv: list[str] | None = None) -> int:
     import sys
     argv = sys.argv[1:] if argv is None else argv
