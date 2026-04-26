@@ -358,5 +358,65 @@ def terminal_signal(cfg: Config) -> Path | None:
         return None
     return p.resolve()
 
+EDITOR_APPS_VSCODE = {"Code", "Code - Insiders", "Cursor"}
+EDITOR_APPS_JETBRAINS = {"PhpStorm", "IntelliJ IDEA", "PyCharm", "WebStorm", "GoLand", "RubyMine", "DataGrip"}
+
+def _vscode_active_folder() -> str | None:
+    p = Path.home() / "Library" / "Application Support" / "Code" / "storage.json"
+    try:
+        data = _json.loads(p.read_text())
+    except (OSError, _json.JSONDecodeError):
+        return None
+    try:
+        folder = data["windowsState"]["lastActiveWindow"]["folder"]
+        if folder.startswith("file://"):
+            folder = folder[len("file://"):]
+        return folder
+    except (KeyError, TypeError):
+        return None
+
+def _jetbrains_recent_project() -> str | None:
+    base = Path.home() / "Library" / "Application Support" / "JetBrains"
+    if not base.exists():
+        return None
+    best, best_m = None, 0.0
+    for prod in base.iterdir():
+        xml = prod / "options" / "recentProjects.xml"
+        if xml.exists():
+            try:
+                m = xml.stat().st_mtime
+                if m > best_m:
+                    best_m, best = m, xml
+            except OSError:
+                pass
+    if best is None:
+        return None
+    try:
+        text = best.read_text()
+        matches = re.findall(r'<entry\s+key="([^"]+)"', text)
+        if not matches:
+            return None
+        home = str(Path.home())
+        path = matches[0].replace("$USER_HOME$", home)
+        return path
+    except OSError:
+        return None
+
+def editor_signal(cfg: Config) -> Path | None:
+    app = _frontmost_app()
+    if not app:
+        return None
+    folder = None
+    if app in EDITOR_APPS_VSCODE:
+        folder = _vscode_active_folder()
+    elif app in EDITOR_APPS_JETBRAINS:
+        folder = _jetbrains_recent_project()
+    if not folder:
+        return None
+    p = Path(folder)
+    if not is_worktree(p, cfg):
+        return None
+    return p.resolve()
+
 if __name__ == "__main__":
     raise SystemExit(main())

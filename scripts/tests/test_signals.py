@@ -96,3 +96,27 @@ def test_terminal_signal_none_when_pwd_outside_worktree_roots(tmp_path):
     with patch("timefocus._frontmost_app", return_value="Terminal"), \
          patch("timefocus._terminal_pwd", return_value=str(tmp_path)):
         assert terminal_signal(cfg) is None
+
+from timefocus import editor_signal
+
+def test_editor_signal_vscode_returns_workspace_folder(tmp_path):
+    cfg = Config(worktree_roots=[str(tmp_path)])
+    wt = tmp_path / "toco"; wt.mkdir(); (wt/".git").write_text("x")
+    with patch("timefocus._frontmost_app", return_value="Code"), \
+         patch("timefocus._vscode_active_folder", return_value=str(wt)):
+        result = editor_signal(cfg)
+        assert result is not None
+        assert str(result) == str(wt.resolve())
+
+def test_editor_signal_jetbrains_returns_recent_project(tmp_path):
+    cfg = Config(worktree_roots=[str(tmp_path)])
+    wt = tmp_path / "toco"; wt.mkdir(); (wt/".git").write_text("x")
+    with patch("timefocus._frontmost_app", return_value="PhpStorm"), \
+         patch("timefocus._jetbrains_recent_project", return_value=str(wt)):
+        result = editor_signal(cfg)
+        assert result is not None
+        assert str(result) == str(wt.resolve())
+
+def test_editor_signal_none_when_not_editor():
+    with patch("timefocus._frontmost_app", return_value="Slack"):
+        assert editor_signal(Config()) is None
