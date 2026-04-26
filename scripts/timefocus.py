@@ -4,6 +4,7 @@ from __future__ import annotations
 
 __version__ = "0.1.0"
 
+import json as _json
 import re
 import time
 import tomllib
@@ -99,6 +100,37 @@ def _latest_jsonl_mtime(d: Path) -> float:
         pass
     return best
 
+def _read_cwd_from_session_dir(d: Path) -> Path | None:
+    """Read the most recent .jsonl in d, return the first record's cwd as a Path."""
+    latest, latest_m = None, 0.0
+    try:
+        for p in d.iterdir():
+            if p.suffix != ".jsonl":
+                continue
+            try:
+                m = p.stat().st_mtime
+                if m > latest_m:
+                    latest_m, latest = m, p
+            except OSError:
+                pass
+    except OSError:
+        return None
+    if latest is None:
+        return None
+    try:
+        with latest.open() as f:
+            for line in f:
+                try:
+                    rec = _json.loads(line)
+                except _json.JSONDecodeError:
+                    continue
+                cwd = rec.get("cwd")
+                if cwd:
+                    return Path(cwd)
+    except OSError:
+        return None
+    return None
+
 def claude_signal(cfg: Config, projects_root: Path = CLAUDE_PROJECTS_ROOT) -> Path | None:
     if not projects_root.exists():
         return None
@@ -113,6 +145,9 @@ def claude_signal(cfg: Config, projects_root: Path = CLAUDE_PROJECTS_ROOT) -> Pa
         return None
     if time.time() - best_mtime > cfg.claude_session_stale_s:
         return None
+    cwd = _read_cwd_from_session_dir(best_dir)
+    if cwd is not None:
+        return cwd
     return decode_claude_session_dir(best_dir.name)
 
 def main(argv: list[str] | None = None) -> int:

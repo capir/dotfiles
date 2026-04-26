@@ -1,29 +1,33 @@
-import time
-import os
+import time, os, json
 from pathlib import Path
 from timefocus import claude_signal, Config
 
-def test_claude_signal_returns_most_recent_session_dir(tmp_path):
+def _write_session(d: Path, cwd: str, mtime: float | None = None):
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / "s1.jsonl"
+    f.write_text(json.dumps({"type": "x", "cwd": cwd}) + "\n")
+    if mtime is not None:
+        os.utime(f, (mtime, mtime))
+
+def test_claude_signal_returns_most_recent_session_cwd(tmp_path):
     cfg = Config(claude_session_stale_s=90)
     projects = tmp_path / "projects"
-    old = projects / "-Users-c-work-TOS-code-base-api-bare-master"
-    new = projects / "-Users-c-work-TOS-code-base-api-bare-toco"
-    old.mkdir(parents=True)
-    new.mkdir(parents=True)
-    (old / "s1.jsonl").write_text("{}")
-    (new / "s1.jsonl").write_text("{}")
     now = time.time()
-    os.utime(old / "s1.jsonl", (now - 600, now - 600))
-    os.utime(new / "s1.jsonl", (now - 5, now - 5))
-    result = claude_signal(cfg, projects_root=projects)
-    assert str(result) == "/Users/c/work/TOS/code_base_api_bare/toco"
+    _write_session(projects / "-Users-c-work-old", cwd="/work/old", mtime=now - 600)
+    _write_session(projects / "-Users-c-work-new", cwd="/work/new", mtime=now - 5)
+    assert str(claude_signal(cfg, projects_root=projects)) == "/work/new"
 
 def test_claude_signal_returns_none_when_stale(tmp_path):
     cfg = Config(claude_session_stale_s=10)
     projects = tmp_path / "projects"
-    d = projects / "-Users-c-foo"
-    d.mkdir(parents=True)
-    f = d / "s.jsonl"
-    f.write_text("{}")
-    os.utime(f, (time.time() - 60, time.time() - 60))
+    _write_session(projects / "-foo", cwd="/foo", mtime=time.time() - 60)
     assert claude_signal(cfg, projects_root=projects) is None
+
+def test_claude_signal_falls_back_to_dir_decode_when_no_cwd(tmp_path):
+    cfg = Config(claude_session_stale_s=90)
+    projects = tmp_path / "projects"
+    d = projects / "-tmp-fake-path"
+    d.mkdir(parents=True)
+    (d / "s.jsonl").write_text('{"type":"x"}\n')  # no cwd field
+    result = claude_signal(cfg, projects_root=projects)
+    assert str(result) == "/tmp/fake/path"
