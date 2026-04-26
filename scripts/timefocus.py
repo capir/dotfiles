@@ -450,6 +450,18 @@ def log_decision(path: Path, record: dict) -> None:
     except OSError:
         pass  # disk full or permissions: drop silently per spec
 
+def compute_desired(cfg: Config, state: State, *, locked: bool, idle_s: int,
+                    focus_uuid: str | None) -> tuple:
+    if locked:
+        return ("PAUSED", None)
+    if idle_s > cfg.idle_threshold_s:
+        return ("PAUSED", None)
+    if focus_uuid:
+        return ("ACTIVE", focus_uuid)
+    if state.current_uuid:
+        return ("ACTIVE", state.current_uuid)
+    return ("PAUSED", None)
+
 def resolve_focus(cfg: Config) -> Path | None:
     for fn in (claude_signal, terminal_signal, editor_signal):
         try:
