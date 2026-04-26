@@ -306,5 +306,57 @@ def _ioreg_hid_idle_ns() -> int:
 def idle_seconds() -> int:
     return _ioreg_hid_idle_ns() // 1_000_000_000
 
+TERMINAL_APPS = {"Terminal", "iTerm2", "iTerm", "WezTerm", "Alacritty", "kitty", "Ghostty"}
+
+def _osascript(script: str) -> str | None:
+    try:
+        r = subprocess.run(["osascript", "-e", script],
+                           capture_output=True, text=True, timeout=3)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if r.returncode != 0:
+        return None
+    return r.stdout.strip() or None
+
+def _frontmost_app() -> str | None:
+    return _osascript(
+        'tell application "System Events" to get name of (first process whose frontmost is true)'
+    )
+
+def _iterm_pwd() -> str | None:
+    return _osascript(
+        'tell application "iTerm2" to tell current window to tell current session to get variable named "session.path"'
+    )
+
+def _terminal_pwd() -> str | None:
+    # Terminal.app pwd retrieval is best-effort via tab tty + lsof.
+    # Detailed implementation deferred to install-time; daemon falls back gracefully.
+    tty = _osascript('tell application "Terminal" to do script "echo $TTY" in selected tab of front window')
+    if not tty:
+        return None
+    try:
+        win_id = _osascript('tell application "Terminal" to get id of front window') or ""
+        r = subprocess.run(["lsof", "-a", "-d", "cwd", "-p", win_id],
+                           capture_output=True, text=True, timeout=3)
+        for line in r.stdout.splitlines():
+            parts = line.split()
+            if parts and parts[-1].startswith("/"):
+                return parts[-1]
+    except Exception:
+        pass
+    return None
+
+def terminal_signal(cfg: Config) -> Path | None:
+    app = _frontmost_app()
+    if not app or app not in TERMINAL_APPS:
+        return None
+    pwd = _iterm_pwd() if app.startswith("iTerm") else _terminal_pwd()
+    if not pwd:
+        return None
+    p = Path(pwd)
+    if not is_worktree(p, cfg):
+        return None
+    return p.resolve()
+
 if __name__ == "__main__":
     raise SystemExit(main())

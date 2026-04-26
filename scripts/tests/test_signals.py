@@ -73,3 +73,26 @@ def test_is_worktree_no_git_returns_false(tmp_path):
     wt.mkdir(parents=True)
     cfg = Config(worktree_roots=[str(root)])
     assert is_worktree(wt, cfg) is False
+
+from unittest.mock import patch
+from timefocus import terminal_signal
+
+def test_terminal_signal_returns_pwd_when_iterm_frontmost(tmp_path):
+    cfg = Config(worktree_roots=[str(tmp_path)])
+    wt = tmp_path / "toco"; wt.mkdir(); (wt/".git").write_text("x")
+    with patch("timefocus._frontmost_app", return_value="iTerm2"), \
+         patch("timefocus._iterm_pwd", return_value=str(wt)):
+        result = terminal_signal(cfg)
+        assert result is not None
+        assert str(result) == str(wt.resolve())
+
+def test_terminal_signal_none_when_browser_frontmost():
+    cfg = Config()
+    with patch("timefocus._frontmost_app", return_value="Google Chrome"):
+        assert terminal_signal(cfg) is None
+
+def test_terminal_signal_none_when_pwd_outside_worktree_roots(tmp_path):
+    cfg = Config(worktree_roots=["/some/other/root"])
+    with patch("timefocus._frontmost_app", return_value="Terminal"), \
+         patch("timefocus._terminal_pwd", return_value=str(tmp_path)):
+        assert terminal_signal(cfg) is None
