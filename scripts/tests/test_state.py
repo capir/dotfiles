@@ -23,3 +23,15 @@ def test_corrupt_state_is_recovered(tmp_path):
     assert s.current_uuid is None
     # original renamed
     assert any(q.name.startswith("s.json.broken-") for q in tmp_path.iterdir())
+
+import json
+from timefocus import log_decision
+
+def test_log_decision_appends_jsonl(tmp_path):
+    p = tmp_path / "log.jsonl"
+    log_decision(p, {"t": "now", "action": "noop"})
+    log_decision(p, {"t": "later", "action": "start"})
+    lines = p.read_text().strip().splitlines()
+    assert len(lines) == 2
+    assert json.loads(lines[0])["action"] == "noop"
+    assert json.loads(lines[1])["action"] == "start"

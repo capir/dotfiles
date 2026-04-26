@@ -442,6 +442,14 @@ def save_state(path: Path, state: State) -> None:
     tmp.write_text(_json.dumps(state.__dict__, indent=2))
     tmp.replace(path)
 
+def log_decision(path: Path, record: dict) -> None:
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a") as f:
+            f.write(_json.dumps(record) + "\n")
+    except OSError:
+        pass  # disk full or permissions: drop silently per spec
+
 def resolve_focus(cfg: Config) -> Path | None:
     for fn in (claude_signal, terminal_signal, editor_signal):
         try:
