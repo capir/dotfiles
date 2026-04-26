@@ -4,7 +4,9 @@ from __future__ import annotations
 
 __version__ = "0.1.0"
 
+import argparse
 import json as _json
+import os
 import re
 import subprocess
 import threading
@@ -16,6 +18,58 @@ from pathlib import Path
 
 DEFAULT_CONFIG_PATH = Path.home() / ".config" / "timefocus" / "config.toml"
 CLAUDE_PROJECTS_ROOT = Path.home() / ".claude" / "projects"
+
+STATE_DIR = Path(os.environ.get("TIMEFOCUS_STATE_DIR",
+                 str(Path.home() / ".cache" / "timefocus")))
+CACHE_DIR = Path(os.environ.get("TIMEFOCUS_CACHE_DIR",
+                 str(Path.home() / ".cache" / "timefocus")))
+CONFIG_PATH = Path(os.environ.get("TIMEFOCUS_CONFIG",
+                   str(DEFAULT_CONFIG_PATH)))
+PLIST_LABEL = "com.c.timefocus"
+PLIST_PATH = Path.home() / "Library" / "LaunchAgents" / f"{PLIST_LABEL}.plist"
+
+def _state_path() -> Path: return STATE_DIR / "state.json"
+def _log_path() -> Path: return STATE_DIR / "log.jsonl"
+def _cache_path() -> Path: return CACHE_DIR / "worktree-task.json"
+
+MAN_TEXT = """\
+TIMEFOCUS(1) — focus → taskwarrior auto-tracker
+
+INSTALL
+  pipx install pyobjc-framework-Quartz
+  ln -s ~/dotfiles/scripts/timefocus.py ~/bin/timefocus
+  cp ~/dotfiles/scripts/com.c.timefocus.plist ~/Library/LaunchAgents/
+  cp ~/dotfiles/scripts/com.c.timefocus.trim.plist ~/Library/LaunchAgents/
+  timefocus --start
+
+CONFIG
+  Default: ~/.config/timefocus/config.toml
+  Override via env: TIMEFOCUS_CONFIG, TIMEFOCUS_STATE_DIR, TIMEFOCUS_CACHE_DIR
+
+COMMANDS
+  --daemon       run forever (LaunchAgent uses this)
+  --once         single tick, exit
+  --status       current state + last 10 decisions
+  --dry-run      same as --daemon but no task/timew calls
+  --resolve PATH debug: print resolved task uuid for given worktree
+  --trim         run nightly trim pass manually
+  --start        launchctl load + verify daemon up
+  --stop         task +ACTIVE stop && launchctl unload
+  --restart      --stop && --start
+  --version      print version
+  --help         short usage
+  --man          this manual
+
+TROUBLESHOOTING
+  a11y prompt loop: System Settings -> Privacy -> Accessibility, allow Terminal/iTerm.
+  pyobjc missing : pipx install pyobjc-framework-Quartz
+  state corrupt   : daemon auto-renames to .json.broken-<ts>; clean install fine.
+  daemon stalled  : timefocus --restart
+  logs           : ~/.cache/timefocus/log.jsonl
+
+KILL SWITCH
+  timefocus --stop
+"""
 
 TICKET_RE = re.compile(r"(?i)\b(tos|toss)-(\d+)\b")
 
@@ -268,14 +322,85 @@ def map_worktree_to_task(wt: Path, cfg: Config, cache: WorktreeCache) -> str | N
     return None
 
 
+def _print_status(cfg: Config) -> None:
+    state = load_state(_state_path())
+    print(f"state:    {'ACTIVE(' + state.current_uuid + ')' if state.current_uuid else 'PAUSED'}")
+    print(f"since:    {state.current_since or '-'}")
+    print(f"pending:  {state.pending_target or 'none'} (since {state.pending_since or '-'})")
+    print("recent (last 10):")
+    log = _log_path()
+    if log.exists():
+        lines = log.read_text().splitlines()[-10:]
+        for line in lines:
+            try:
+                r = _json.loads(line)
+                print(f"  {r.get('t','?')}  {r.get('action','?'):8s}  "
+                      f"focus={r.get('focus_wt') or '-'}  idle={r.get('idle_s','?')}s")
+            except _json.JSONDecodeError:
+                continue
+
+
+def cmd_start() -> int:
+    r = subprocess.run(["launchctl", "load", str(PLIST_PATH)],
+                       capture_output=True, text=True)
+    return r.returncode
+
+
+def cmd_stop() -> int:
+    _task_cmd(["task", "+ACTIVE", "stop"])
+    r = subprocess.run(["launchctl", "unload", str(PLIST_PATH)],
+                       capture_output=True, text=True)
+    return r.returncode
+
+
+def cmd_trim(cfg: Config) -> int:
+    return 0  # implemented in Task 21
+
+
 def main(argv: list[str] | None = None) -> int:
-    import sys
-    argv = sys.argv[1:] if argv is None else argv
-    if argv == ["--version"]:
-        print(__version__)
+    ap = argparse.ArgumentParser(prog="timefocus", add_help=False)
+    ap.add_argument("--help", action="store_true")
+    ap.add_argument("--man", action="store_true")
+    ap.add_argument("--version", action="store_true")
+    ap.add_argument("--daemon", action="store_true")
+    ap.add_argument("--once", action="store_true")
+    ap.add_argument("--status", action="store_true")
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--resolve", metavar="PATH")
+    ap.add_argument("--trim", action="store_true")
+    ap.add_argument("--start", action="store_true")
+    ap.add_argument("--stop", action="store_true")
+    ap.add_argument("--restart", action="store_true")
+    args = ap.parse_args(argv)
+
+    if args.version: print(__version__); return 0
+    if args.help:
+        print(ap.format_help())
+        print("Run with --man for the full manual.")
         return 0
-    print("timefocus: not yet implemented", file=sys.stderr)
-    return 2
+    if args.man: print(MAN_TEXT); return 0
+
+    cfg = load_config(CONFIG_PATH)
+
+    if args.status: _print_status(cfg); return 0
+    if args.resolve:
+        cache = WorktreeCache(_cache_path())
+        uuid = map_worktree_to_task(Path(args.resolve), cfg, cache)
+        print(uuid or "")
+        return 0 if uuid else 1
+    if args.start: return cmd_start()
+    if args.stop: return cmd_stop()
+    if args.restart: return cmd_stop() or cmd_start()
+    if args.trim: return cmd_trim(cfg)
+    if args.once:
+        tick_once(cfg, state_path=_state_path(), log_path=_log_path(),
+                  cache_path=_cache_path(), dry_run=args.dry_run)
+        return 0
+    if args.daemon:
+        run_daemon(cfg=cfg, state_path=_state_path(), log_path=_log_path(),
+                   cache_path=_cache_path(), dry_run=args.dry_run)
+        return 0
+    print(ap.format_help()); return 2
 
 def _cgsession_dict() -> dict | None:
     try:
