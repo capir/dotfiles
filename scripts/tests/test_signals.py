@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import time, os, json
 from pathlib import Path
 from timefocus import claude_signal, Config
@@ -31,3 +33,14 @@ def test_claude_signal_falls_back_to_dir_decode_when_no_cwd(tmp_path):
     (d / "s.jsonl").write_text('{"type":"x"}\n')  # no cwd field
     result = claude_signal(cfg, projects_root=projects)
     assert str(result) == "/tmp/fake/path"
+
+def test_claude_signal_finds_cwd_in_nested_uuid_subdir(tmp_path):
+    cfg = Config(claude_session_stale_s=90)
+    projects = tmp_path / "projects"
+    proj = projects / "-Users-c-some-project"
+    nested = proj / "abc-uuid-subdir"
+    nested.mkdir(parents=True)
+    f = nested / "session.jsonl"
+    f.write_text(json.dumps({"type":"x","cwd":"/some/project"}) + "\n")
+    os.utime(f, (time.time() - 5, time.time() - 5))
+    assert str(claude_signal(cfg, projects_root=projects)) == "/some/project"

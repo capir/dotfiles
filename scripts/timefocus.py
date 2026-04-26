@@ -85,50 +85,51 @@ def decode_claude_session_dir(name: str) -> Path | None:
             i = match_end
     return current
 
-def _latest_jsonl_mtime(d: Path) -> float:
-    best = 0.0
+def _newest_jsonl(d: Path) -> tuple[Path | None, float]:
+    """Recursively find the most-recently-modified .jsonl under d.
+    Returns (path, mtime) or (None, 0.0)."""
+    best, best_m = None, 0.0
     try:
-        for p in d.iterdir():
-            if p.suffix == ".jsonl":
-                try:
-                    m = p.stat().st_mtime
-                    if m > best:
-                        best = m
-                except OSError:
-                    pass
-    except OSError:
-        pass
-    return best
-
-def _read_cwd_from_session_dir(d: Path) -> Path | None:
-    """Read the most recent .jsonl in d, return the first record's cwd as a Path."""
-    latest, latest_m = None, 0.0
-    try:
-        for p in d.iterdir():
-            if p.suffix != ".jsonl":
-                continue
+        for p in d.rglob("*.jsonl"):
             try:
                 m = p.stat().st_mtime
-                if m > latest_m:
-                    latest_m, latest = m, p
+                if m > best_m:
+                    best_m, best = m, p
             except OSError:
-                pass
+                continue
     except OSError:
-        return None
-    if latest is None:
-        return None
+        pass
+    return best, best_m
+
+def _latest_jsonl_mtime(d: Path) -> float:
+    """Return mtime of the most-recently-modified .jsonl under d, recursively."""
+    return _newest_jsonl(d)[1]
+
+def _read_cwd_from_session_dir(d: Path) -> Path | None:
+    """Walk session JSONLs in d (newest first) until one yields a cwd."""
+    paths: list[tuple[float, Path]] = []
     try:
-        with latest.open() as f:
-            for line in f:
-                try:
-                    rec = _json.loads(line)
-                except _json.JSONDecodeError:
-                    continue
-                cwd = rec.get("cwd")
-                if cwd:
-                    return Path(cwd)
+        for p in d.rglob("*.jsonl"):
+            try:
+                paths.append((p.stat().st_mtime, p))
+            except OSError:
+                continue
     except OSError:
         return None
+    paths.sort(reverse=True)
+    for _, path in paths:
+        try:
+            with path.open() as f:
+                for line in f:
+                    try:
+                        rec = _json.loads(line)
+                    except _json.JSONDecodeError:
+                        continue
+                    cwd = rec.get("cwd")
+                    if cwd:
+                        return Path(cwd)
+        except OSError:
+            continue
     return None
 
 def claude_signal(cfg: Config, projects_root: Path = CLAUDE_PROJECTS_ROOT) -> Path | None:
