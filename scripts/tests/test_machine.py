@@ -89,3 +89,42 @@ def test_idle_at_threshold_keeps_active_strict_greater():
     d = compute_desired(cfg, State(current_uuid="x"), locked=False, idle_s=301,
                         focus_uuid="y")
     assert d == ("PAUSED", None)
+
+from unittest.mock import patch, call
+from pathlib import Path
+from timefocus import apply_action, tick_once
+
+def test_apply_action_start_calls_task_start():
+    with patch("timefocus._task_cmd") as m:
+        a = Action("START", "uuid-y", State(current_uuid="uuid-y"))
+        apply_action(a, dry_run=False)
+        m.assert_called_once_with(["task", "uuid-y", "start"])
+
+def test_apply_action_switch_stops_then_starts():
+    with patch("timefocus._task_cmd") as m:
+        a = Action("SWITCH", "uuid-y", State(current_uuid="uuid-y"))
+        apply_action(a, dry_run=False, prev_uuid="uuid-x")
+        assert m.call_args_list == [
+            call(["task", "uuid-x", "stop"]),
+            call(["task", "uuid-y", "start"]),
+        ]
+
+def test_apply_action_dry_run_does_not_call():
+    with patch("timefocus._task_cmd") as m:
+        apply_action(Action("START", "y", State()), dry_run=True)
+        m.assert_not_called()
+
+def test_tick_once_paused_to_active(tmp_path):
+    cfg = Config(worktree_roots=[str(tmp_path)])
+    state_path = tmp_path / "s.json"
+    log_path = tmp_path / "log.jsonl"
+    cache_path = tmp_path / "wt.json"
+    with patch("timefocus.is_locked", return_value=False), \
+         patch("timefocus.idle_seconds", return_value=0), \
+         patch("timefocus.resolve_focus", return_value=tmp_path), \
+         patch("timefocus.map_worktree_to_task", return_value="uuid-1"), \
+         patch("timefocus._task_cmd"):
+        tick_once(cfg, state_path=state_path, log_path=log_path,
+                  cache_path=cache_path, dry_run=False)
+    from timefocus import load_state
+    assert load_state(state_path).current_uuid == "uuid-1"

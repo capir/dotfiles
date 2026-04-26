@@ -513,5 +513,46 @@ def resolve_focus(cfg: Config) -> Path | None:
             return p
     return None
 
+def _task_cmd(args: list[str]) -> int:
+    try:
+        r = subprocess.run(args, capture_output=True, text=True, timeout=10)
+        return r.returncode
+    except (OSError, subprocess.TimeoutExpired):
+        return 1
+
+def apply_action(action: Action, *, dry_run: bool, prev_uuid: str | None = None) -> None:
+    if dry_run:
+        return
+    if action.kind == "START":
+        _task_cmd(["task", action.target_uuid, "start"])
+    elif action.kind == "STOP":
+        _task_cmd(["task", action.target_uuid, "stop"])
+    elif action.kind == "SWITCH":
+        if prev_uuid:
+            _task_cmd(["task", prev_uuid, "stop"])
+        _task_cmd(["task", action.target_uuid, "start"])
+
+def tick_once(cfg: Config, *, state_path: Path, log_path: Path,
+              cache_path: Path, dry_run: bool) -> None:
+    now_iso = datetime.now(timezone.utc).isoformat()
+    state = load_state(state_path)
+    cache = WorktreeCache(cache_path)
+    locked = is_locked()
+    idle = idle_seconds()
+    focus_wt = resolve_focus(cfg)
+    focus_uuid = map_worktree_to_task(focus_wt, cfg, cache) if focus_wt else None
+    desired = compute_desired(cfg, state, locked=locked, idle_s=idle,
+                              focus_uuid=focus_uuid)
+    action = transition(cfg, state, desired=desired, now_iso=now_iso)
+    apply_action(action, dry_run=dry_run, prev_uuid=state.current_uuid)
+    save_state(state_path, action.new_state)
+    log_decision(log_path, {
+        "t": now_iso, "locked": locked, "idle_s": idle,
+        "focus_wt": str(focus_wt) if focus_wt else None,
+        "focus_uuid": focus_uuid,
+        "current": state.current_uuid, "desired": list(desired),
+        "action": action.kind, "dry_run": dry_run,
+    })
+
 if __name__ == "__main__":
     raise SystemExit(main())
