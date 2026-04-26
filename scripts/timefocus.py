@@ -289,5 +289,22 @@ def is_locked() -> bool:
         return False
     return bool(d.get("CGSSessionScreenIsLocked", False))
 
+_IDLE_RE = re.compile(r'"HIDIdleTime"\s*=\s*(\d+)')
+
+def _parse_ioreg_idle_ns(text: str) -> int:
+    m = _IDLE_RE.search(text)
+    return int(m.group(1)) if m else 0
+
+def _ioreg_hid_idle_ns() -> int:
+    try:
+        r = subprocess.run(["ioreg", "-c", "IOHIDSystem"],
+                           capture_output=True, text=True, timeout=3)
+    except (OSError, subprocess.TimeoutExpired):
+        return 0
+    return _parse_ioreg_idle_ns(r.stdout)
+
+def idle_seconds() -> int:
+    return _ioreg_hid_idle_ns() // 1_000_000_000
+
 if __name__ == "__main__":
     raise SystemExit(main())
