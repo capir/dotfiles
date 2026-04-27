@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+HERE="$(cd "$(dirname "$0")" && pwd)"
+source "$HERE/tapi-flow-lib.sh"
+
+pwd_real="$(pwd -P)"
+printf 'pwd:      %s\n' "$pwd_real"
+printf 'branch:   %s\n' "$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo n/a)"
+if [[ -f .task-uuid ]]; then
+  uuid="$(cat .task-uuid)"
+  printf 'task:     %s\n' "$uuid"
+  task "$uuid" 2>/dev/null | head -5 || true
+else
+  printf 'task:     (none — no .task-uuid in this worktree)\n'
+fi
+if command -v timefocus >/dev/null; then
+  printf '\ntimefocus:\n'
+  timefocus --status || true
+fi
