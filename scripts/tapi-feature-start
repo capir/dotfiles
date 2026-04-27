@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -euo pipefail
+HERE="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=/dev/null
+source "$HERE/tapi-flow-lib.sh"
+
+usage() {
+  cat <<'EOF'
+Usage: tapi-feature-start <TICKET> [--feature|--hotfix] [--uuid <UUID>]
+Starts a feature/<lower-key>-<slug> (or hotfix/...) branch in the current tracker worktree.
+EOF
+}
+
+[[ $# -ge 1 ]] || { usage >&2; exit 2; }
+ticket="$1"; shift
+override=""
+override_uuid=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --feature) override=feature ;;
+    --hotfix)  override=hotfix ;;
+    --uuid)    override_uuid="${2:-}"; shift ;;
+    -h|--help) usage; exit 0 ;;
+    *) fail "unknown arg: $1" ;;
+  esac
+  shift
+done
+
+ticket_upper="$(printf '%s' "$ticket" | tr '[:lower:]' '[:upper:]')"
+ticket_lower="$(printf '%s' "$ticket" | tr '[:upper:]' '[:lower:]')"
+
+tracker="$(assert_in_tracker)"
+assert_clean_worktree
+assert_on_tracker "$tracker"
+
+if [[ -n "$override_uuid" ]]; then
+  uuid="$override_uuid"
+else
+  uuid="$(task_lookup_by_ticket "$ticket_upper")"
+  if [[ -z "$uuid" ]]; then
+    bugwarrior_pull_throttled
+    uuid="$(task_lookup_by_ticket "$ticket_upper")"
+  fi
+  [[ -n "$uuid" ]] || fail "no Taskwarrior task for ticket $ticket_upper. Try later or pass --uuid <uuid>."
+fi
+
+if [[ -n "$override" ]]; then
+  kind="$override"
+else
+  kind="$(classify_ticket "$uuid")"
+  [[ "$kind" == ambiguous ]] && fail "ticket $ticket_upper has neither a Linear project nor a Bug label. Categorize first or pass --feature/--hotfix."
+fi
+
+base="develop"
+[[ "$kind" == hotfix ]] && base="master"
+
+desc="$(task_description "$uuid")"
+slug="$(slugify "$desc")"
+[[ -n "$slug" ]] || slug="task"
+branch="${kind}/${ticket_lower}-${slug}"
+
+if git rev-parse --verify --quiet "refs/heads/$branch" >/dev/null; then
+  fail "branch $branch already exists"
+fi
+
+ff_base_branch "$base"
+
+git checkout -q -b "$branch" "$base"
+
+echo "$uuid" > .task-uuid
+
+task "$uuid" start >/dev/null 2>&1 || log "warn: 'task $uuid start' failed; timefocus may still pick up via .task-uuid"
+
+summarize "started $branch (uuid $uuid) on $tracker"
