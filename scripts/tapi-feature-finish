@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+HERE="$(cd "$(dirname "$0")" && pwd)"
+source "$HERE/tapi-flow-lib.sh"
+
+resume=no
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --resume) resume=yes ;;
+    -h|--help) cat <<'EOF'; exit 0
+Usage: tapi-feature-finish [--resume]
+Finishes a feature/* branch by merging into develop with --no-ff, then deletes it.
+EOF
+;;
+    *) fail "unknown arg: $1" ;;
+  esac
+  shift
+done
+
+tracker="$(assert_in_tracker)"
+branch="$(assert_on_issue_branch)"
+case "$branch" in feature/*) ;; *) fail "tapi-feature-finish only handles feature/*. For hotfix, use tapi-hotfix-finish." ;; esac
+
+merge_in_progress() { test -e .git/MERGE_HEAD; }
+
+if [[ "$resume" == yes ]]; then
+  merge_in_progress || fail "no merge in progress"
+  log "resuming after manual conflict resolution..."
+else
+  assert_clean_worktree
+  ! merge_in_progress || fail "merge already in progress; resolve and rerun with --resume"
+
+  ff_base_branch develop
+  git checkout -q develop
+  if ! git merge --no-ff -m "Merge $branch into develop" "$branch"; then
+    log "merge conflict — resolve files, then rerun: tapi-feature-finish --resume"
+    exit 1
+  fi
+fi
+
+if merge_in_progress; then
+  log "you still have a merge in progress — resolve and re-run with --resume"; exit 1
+fi
+
+git push origin develop || fail "git push origin develop failed"
+
+git branch -D "$branch"
+
+worktree_path="$TAPI_REPO_ROOT/$tracker"
+[[ -f "$worktree_path/.task-uuid" ]] && rm -f "$worktree_path/.task-uuid"
+
+ticket="$(ticket_from_branch "$branch")"
+if [[ -n "$ticket" ]]; then
+  uuid="$(task_lookup_by_ticket "$ticket")"
+  [[ -n "$uuid" ]] && task "$uuid" stop >/dev/null 2>&1 || true
+fi
+
+summarize "finished $branch, merged to develop, branch deleted"
