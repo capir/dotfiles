@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=/dev/null
 source "$HERE/tapi-flow-lib.sh"
 
 resume=no

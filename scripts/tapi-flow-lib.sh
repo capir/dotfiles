@@ -13,7 +13,7 @@ log()  { printf '%s\n' "$*" >&2; }
 fail() { log "tapi-flow: $*"; exit 1; }
 
 assert_in_tracker() {
-  local pwd_real cur tracker
+  local pwd_real tracker
   pwd_real="$(pwd -P)"
   for tracker in "${TAPI_TRACKERS[@]}"; do
     if [[ "$pwd_real" == "$TAPI_REPO_ROOT/$tracker" ]]; then
