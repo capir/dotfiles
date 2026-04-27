@@ -32,3 +32,26 @@ setup() {
   run ticket_from_branch "toco"
   [ "$output" = "" ]
 }
+
+@test "pre-commit hook refuses commit on tracker branch" {
+  local tmp
+  tmp=$(mktemp -d)
+  git -C "$tmp" init -q -b toco
+  install -m755 /Users/c/dotfiles/scripts/tapi-hooks/pre-commit "$tmp/.git/hooks/pre-commit"
+  echo file > "$tmp/f"
+  git -C "$tmp" add f
+  run git -C "$tmp" -c user.name=t -c user.email=t@t commit -m x
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"refusing commit on tracker branch 'toco'"* ]]
+}
+
+@test "pre-commit hook allows commit on feature/* branch" {
+  local tmp
+  tmp=$(mktemp -d)
+  git -C "$tmp" init -q -b feature/tos-9-x
+  install -m755 /Users/c/dotfiles/scripts/tapi-hooks/pre-commit "$tmp/.git/hooks/pre-commit"
+  echo file > "$tmp/f"
+  git -C "$tmp" add f
+  run git -C "$tmp" -c user.name=t -c user.email=t@t commit -m x
+  [ "$status" -eq 0 ]
+}

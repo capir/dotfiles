@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# .git/hooks/pre-commit — refuse direct commits on tracker branches.
+set -euo pipefail
+TRACKERS=(toco ares atlas hermes)
+branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)
+for t in "${TRACKERS[@]}"; do
+  if [[ "$branch" == "$t" ]]; then
+    cat >&2 <<EOF
+tapi-flow: refusing commit on tracker branch '$branch'.
+Tracker branches are slot-holders only.
+- For an issue: \`tapi-feature-start <TICKET>\` (or hotfix variant).
+- For a tracker-only refactor: commit on \`develop\` directly.
+EOF
+    exit 1
+  fi
+done
+exit 0
