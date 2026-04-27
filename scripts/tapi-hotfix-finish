@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+HERE="$(cd "$(dirname "$0")" && pwd)"
+source "$HERE/tapi-flow-lib.sh"
+
+resume_step=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --resume) resume_step="${2:-master}"; [[ -n "${2:-}" ]] && shift ;;
+    -h|--help) cat <<'EOF'; exit 0
+Usage: tapi-hotfix-finish [--resume <master|develop>]
+Finishes a hotfix/* branch by merging into master (with --no-ff + tag), then into develop.
+EOF
+;;
+    *) fail "unknown arg: $1" ;;
+  esac
+  shift
+done
+
+tracker="$(assert_in_tracker)"
+branch="$(assert_on_issue_branch)"
+case "$branch" in hotfix/*) ;; *) fail "tapi-hotfix-finish only handles hotfix/*."; esac
+
+merge_in_progress() { test -e .git/MERGE_HEAD; }
+
+step_master() {
+  ff_base_branch master
+  git checkout -q master
+  if ! git merge --no-ff -m "Merge $branch into master" "$branch"; then
+    log "merge conflict on master — resolve, then: tapi-hotfix-finish --resume master"; exit 1
+  fi
+  local key tag
+  key="$(ticket_from_branch "$branch")"
+  tag="hotfix-$(date +%Y%m%d)-${key,,}"
+  git tag "$tag"
+  git push origin master "$tag" || fail "push of master/$tag failed"
+}
+
+step_develop() {
+  ff_base_branch develop
+  git checkout -q develop
+  if ! git merge --no-ff -m "Merge $branch into develop" "$branch"; then
+    log "merge conflict on develop — resolve, then: tapi-hotfix-finish --resume develop"; exit 1
+  fi
+  git push origin develop || fail "push of develop failed"
+}
+
+cleanup() {
+  git branch -D "$branch"
+  worktree_path="$TAPI_REPO_ROOT/$tracker"
+  [[ -f "$worktree_path/.task-uuid" ]] && rm -f "$worktree_path/.task-uuid"
+  ticket="$(ticket_from_branch "$branch")"
+  if [[ -n "$ticket" ]]; then
+    uuid="$(task_lookup_by_ticket "$ticket")"
+    [[ -n "$uuid" ]] && task "$uuid" stop >/dev/null 2>&1 || true
+  fi
+  summarize "finished $branch, tagged on master, merged into develop, branch deleted"
+}
+
+if [[ -n "$resume_step" ]]; then
+  merge_in_progress || fail "no merge in progress"
+  log "resuming at $resume_step..."
+  case "$resume_step" in
+    master) step_develop ;;
+    develop) ;;
+    *) fail "unknown --resume target: $resume_step" ;;
+  esac
+  cleanup
+  exit 0
+fi
+
+assert_clean_worktree
+! merge_in_progress || fail "merge already in progress"
+
+step_master
+step_develop
+cleanup
