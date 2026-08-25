@@ -54,8 +54,12 @@ fi
 base="develop"
 [[ "$kind" == hotfix ]] && base="master"
 
-desc="$(task_description "$uuid")"
-slug="$(slugify "$desc")"
+title="$(linear_title "$ticket_upper")"
+if [[ -z "$title" ]]; then
+  log "warn: Linear title fetch failed for $ticket_upper; falling back to Taskwarrior description"
+  title="$(task_description "$uuid")"
+fi
+slug="$(slugify "$title")"
 [[ -n "$slug" ]] || slug="task"
 branch="${kind}/${ticket_lower}-${slug}"
 
@@ -68,6 +72,11 @@ ff_base_branch "$base"
 git checkout -q -b "$branch" "$base"
 
 echo "$uuid" > .task-uuid
+
+if [[ -n "$title" ]]; then
+  task "$uuid" modify -- "$title" >/dev/null 2>&1 \
+    || log "warn: failed to sync Taskwarrior description to Linear title"
+fi
 
 task "$uuid" start >/dev/null 2>&1 || log "warn: 'task $uuid start' failed; timefocus may still pick up via .task-uuid"
 

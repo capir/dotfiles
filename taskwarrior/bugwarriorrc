@@ -1,12 +1,16 @@
 [general]
 interactive = yes
-targets = dds_youtrack
+# tapi_linear stays out of this list until its api_token is filled in below.
+targets = dds_youtrack,tos_linear
 inline_links = False
 annotation_comments = True
 merge_annotations = False
 
 [notifications]
-notifications = true
+# Off: bugwarrior 1.x crashes in notifications._get_metadata when a new issue has
+# no project ("Project: " + None -> TypeError), which aborts the whole pull before
+# any task is written. Every project-less Linear issue used to kill the sync.
+notifications = false
 backend = applescript
 only_on_new_tasks = true
 
@@ -17,3 +21,24 @@ youtrack.login = capir
 youtrack.token = @oracle:use_keyring
 youtrack.query = for:me #Unresolved
 youtrack.tag_template = yt_{{tag|lower}}
+
+[tos_linear]
+service = linear
+linear.api_token = @oracle:eval:security find-generic-password -s bugwarrior-linear-tosv2 -a c -w
+linear.import_labels_as_tags = true
+linear.label_template = true
+linear.statuses = Backlog,Todo,In Progress,Not A Priority
+
+# TPI-* tickets live in the tos-api workspace. Linear personal API keys are
+# scoped to one workspace, so the tos_linear key above cannot see them — hence
+# a second target. Create the key at https://linear.app/tos-api/settings/api, then:
+#   security add-generic-password -U -s bugwarrior-linear-tapi -a <user> -T /usr/bin/security -w '<key>'
+# and add `tapi_linear` to targets in [general]. Keys live in the Keychain, never
+# in this file — it is committed to a GitHub remote.
+# Only started/queued work is mirrored, to keep the pending list short.
+[tapi_linear]
+service = linear
+linear.api_token = @oracle:eval:security find-generic-password -s bugwarrior-linear-tapi -a c -w
+linear.import_labels_as_tags = true
+linear.statuses = Todo,In Progress
+linear.only_if_assigned = catalin@travelos.ro

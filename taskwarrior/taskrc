@@ -29,6 +29,28 @@ weekstart=monday
 urgency.user.tag.bug.coefficient=13.0
 
 # Bugwarrior UDAs
+uda.linearurl.type=string
+uda.linearurl.label=Issue URL
+uda.lineartitle.type=string
+uda.lineartitle.label=Issue Title
+uda.lineardescription.type=string
+uda.lineardescription.label=Issue Description
+uda.linearstatus.type=string
+uda.linearstatus.label=Issue State
+uda.linearidentifier.type=string
+uda.linearidentifier.label=Linear Identifier
+uda.linearteam.type=string
+uda.linearteam.label=Project ID
+uda.linearcreator.type=string
+uda.linearcreator.label=Issue Creator
+uda.linearassignee.type=string
+uda.linearassignee.label=Issue Assignee
+uda.linearcreated.type=date
+uda.linearcreated.label=Issue Created
+uda.linearupdated.type=date
+uda.linearupdated.label=Issue Updated
+uda.linearclosed.type=date
+uda.linearclosed.label=Issue Closed
 uda.youtrackissue.type=string
 uda.youtrackissue.label=YouTrack Issue
 uda.youtracksummary.type=string
@@ -40,6 +62,16 @@ uda.youtrackproject.label=YouTrack Project
 uda.youtracknumber.type=string
 uda.youtracknumber.label=YouTrack Project Issue Number
 # END Bugwarrior UDAs
+
+# TAPI supplier roadmap UDA — order suppliers in `task +roadmap list`
+uda.roadmap.type=numeric
+uda.roadmap.label=Roadmap#
+report.roadmap.description=TAPI supplier roadmap
+report.roadmap.columns=roadmap,project,description,status,urgency
+report.roadmap.labels=#,Project,Description,Status,Urg
+report.roadmap.sort=roadmap+
+report.roadmap.filter=+roadmap
+
 context.administrator.read=project:dds
 context.administrator.write=project:dds
 context.developer.read=project:TOSS or project:tapi
