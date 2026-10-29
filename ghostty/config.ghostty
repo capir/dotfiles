@@ -3,12 +3,16 @@
 
 font-family = Lekton Nerd Font Mono
 font-size = 19
-adjust-cell-height = 10%
+adjust-cell-height = 20%
 
-theme = Catppuccin Mocha
+theme = Catppuccin Frappe
+
+# previous: kitty-matching TokyoNight with a softer foreground
+# theme = TokyoNight Moon Kitty
+# foreground = #b4bde0
 
 # blur only shows through a non-opaque background
-background-opacity = 0.95
+background-opacity = 0.9
 background-blur = 20
 
 window-decoration = true
