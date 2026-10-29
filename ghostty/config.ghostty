@@ -1,0 +1,23 @@
+# Ghostty config
+# Options: `ghostty +show-config --default --docs` or https://ghostty.org/docs/config
+
+font-family = Lekton Nerd Font Mono
+font-size = 19
+adjust-cell-height = 10%
+
+theme = Catppuccin Mocha
+
+# blur only shows through a non-opaque background
+background-opacity = 0.95
+background-blur = 20
+
+window-decoration = true
+macos-titlebar-style = hidden
+window-padding-x = 10
+window-padding-y = 10
+
+mouse-hide-while-typing = true
+macos-option-as-alt = true
+
+# TODO: add ghostty/shaders/space.glsl to dotfiles, then uncomment
+# custom-shader = ~/.config/ghostty/shaders/space.glsl

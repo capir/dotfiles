@@ -10,6 +10,11 @@ ln -s "$DOTFILES/nvim" "$HOME/.config/nvim"
 rm -rf "$HOME/.config/kitty"
 ln -s "$DOTFILES/kitty" "$HOME/.config/kitty"
 
+# Ghostty config (the macOS App Support template would load after XDG, so drop it)
+rm -rf "$HOME/.config/ghostty"
+ln -s "$DOTFILES/ghostty" "$HOME/.config/ghostty"
+rm -f "$HOME/Library/Application Support/com.mitchellh.ghostty/config.ghostty"
+
 # Tmux config
 mkdir -p "$HOME/.tmux"
 rm -rf "$HOME/.tmux.conf" "$HOME/.tmux/plugins"
@@ -108,6 +113,10 @@ for n in note-gen note-link note-refine note-save; do
   rm -rf "$HOME/.local/bin/$n"
   ln -s "$DOTFILES/scripts/$n" "$HOME/.local/bin/$n"
 done
+
+# Ghostty CLI (+list-themes, +validate-config, ...); launch the app with `open -na Ghostty`
+rm -rf "$HOME/.local/bin/ghostty"
+ln -s "/Applications/Ghostty.app/Contents/MacOS/ghostty" "$HOME/.local/bin/ghostty"
 
 rm -rf "$HOME/.local/bin/vault"
 ln -s "$DOTFILES/scripts/vault" "$HOME/.local/bin/vault"
