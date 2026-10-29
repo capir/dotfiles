@@ -12,7 +12,7 @@ theme = Catppuccin Frappe
 # foreground = #b4bde0
 
 # blur only shows through a non-opaque background
-background-opacity = 0.9
+background-opacity = 0.95
 background-blur = 20
 
 window-decoration = true

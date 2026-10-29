@@ -1,0 +1,59 @@
+# lazysql connections — mirror mycli/.myclirc [alias_dsn].
+# Passwords come from pass (cli/db/<profile>) via db_pass_urlenc, never stored here.
+
+[[database]]
+Name = "TAPI prod"
+Provider = "mysql"
+DBName = "travelapi_prod"
+URL = "mysql://travelapi_prod:${password}@127.0.0.1:3307/travelapi_prod"
+ReadOnly = true
+Commands = [{ Command = "db_pass_urlenc tapi", SaveOutputTo = "password" }]
+
+[[database]]
+Name = "TOS marsigli"
+Provider = "mysql"
+DBName = "marsigli_tos"
+URL = "mysql://marsigli_tos:${password}@127.0.0.1:3308/marsigli_tos"
+Commands = [{ Command = "db_pass_urlenc tos_marsigli", SaveOutputTo = "password" }]
+
+[[database]]
+Name = "TOS look"
+Provider = "mysql"
+DBName = "look_tos"
+URL = "mysql://look_tos:${password}@127.0.0.1:3308/look_tos"
+Commands = [{ Command = "db_pass_urlenc tos_look", SaveOutputTo = "password" }]
+
+[[database]]
+Name = "TOS hello"
+Provider = "mysql"
+DBName = "hello_tos"
+URL = "mysql://hello_tos:${password}@127.0.0.1:3308/hello_tos"
+Commands = [{ Command = "db_pass_urlenc tos_hello", SaveOutputTo = "password" }]
+
+[[database]]
+Name = "TOS root"
+Provider = "mysql"
+DBName = "mysql"
+URL = "mysql://root:${password}@127.0.0.1:3308/mysql"
+Commands = [{ Command = "db_pass_urlenc tos_root", SaveOutputTo = "password" }]
+
+[[database]]
+Name = "TOS posada"
+Provider = "mysql"
+DBName = "posada_tos"
+URL = "mysql://posada_tos:${password}@127.0.0.1:3309/posada_tos"
+Commands = [{ Command = "db_pass_urlenc tos_posada", SaveOutputTo = "password" }]
+
+[[database]]
+Name = "TOS vilex"
+Provider = "mysql"
+DBName = "vilex_tos"
+URL = "mysql://vilex_tos:${password}@127.0.0.1:3309/vilex_tos"
+Commands = [{ Command = "db_pass_urlenc tos_vilex", SaveOutputTo = "password" }]
+
+# Local Laravel Sail (default dev credentials)
+[[database]]
+Name = "Sail"
+Provider = "mysql"
+DBName = "laravel"
+URL = "mysql://sail:password@127.0.0.1:3306/laravel"

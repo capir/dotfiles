@@ -30,6 +30,11 @@ ln -s "$DOTFILES/hledger/hledger.conf" "$HOME/.config/hledger/hledger.conf"
 rm -rf "$HOME/.myclirc"
 ln -s "$DOTFILES/mycli/.myclirc" "$HOME/.myclirc"
 
+# lazysql config (saved_queries stays local)
+mkdir -p "$HOME/.config/lazysql"
+rm -rf "$HOME/.config/lazysql/config.toml"
+ln -s "$DOTFILES/lazysql/config.toml" "$HOME/.config/lazysql/config.toml"
+
 # aider config
 rm -rf "$HOME/.aider.conf.yml"
 rm -rf "$HOME/.aider.model.settings.yml"
@@ -117,6 +122,9 @@ done
 # Ghostty CLI (+list-themes, +validate-config, ...); launch the app with `open -na Ghostty`
 rm -rf "$HOME/.local/bin/ghostty"
 ln -s "/Applications/Ghostty.app/Contents/MacOS/ghostty" "$HOME/.local/bin/ghostty"
+
+rm -rf "$HOME/.local/bin/db_pass_urlenc"
+ln -s "$DOTFILES/scripts/db_pass_urlenc.sh" "$HOME/.local/bin/db_pass_urlenc"
 
 rm -rf "$HOME/.local/bin/vault"
 ln -s "$DOTFILES/scripts/vault" "$HOME/.local/bin/vault"
