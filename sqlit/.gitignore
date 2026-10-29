@@ -1,0 +1,4 @@
+# only track connections (no secrets: passwords come from pass); history etc. stays local
+*
+!.gitignore
+!connections.json

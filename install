@@ -35,6 +35,10 @@ mkdir -p "$HOME/.config/lazysql"
 rm -rf "$HOME/.config/lazysql/config.toml"
 ln -s "$DOTFILES/lazysql/config.toml" "$HOME/.config/lazysql/config.toml"
 
+# sqlit config (only connections.json is tracked; see sqlit/.gitignore)
+rm -rf "$HOME/.config/sqlit"
+ln -s "$DOTFILES/sqlit" "$HOME/.config/sqlit"
+
 # gpg-agent config (pinentry-mac); restart the agent to pick up changes
 mkdir -p "$HOME/.gnupg"
 chmod 700 "$HOME/.gnupg"

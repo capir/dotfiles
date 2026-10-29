@@ -1,0 +1,270 @@
+{
+  "version": 2,
+  "connections": [
+    {
+      "name": "TAPI prod",
+      "db_type": "mysql",
+      "source": null,
+      "connection_url": null,
+      "folder_path": "",
+      "extra_options": {},
+      "options": {
+        "ssh_host": "",
+        "ssh_port": "22",
+        "ssh_username": "",
+        "ssh_auth_type": "key",
+        "ssh_key_path": "~/.ssh/id_rsa",
+        "ssh_password": null,
+        "tls_mode": "default",
+        "tls_ca": "",
+        "tls_cert": "",
+        "tls_key": "",
+        "tls_key_password": "",
+        "query_alert_mode": "write"
+      },
+      "endpoint": {
+        "kind": "tcp",
+        "host": "127.0.0.1",
+        "port": "3307",
+        "database": "travelapi_prod",
+        "username": "travelapi_prod",
+        "password": null,
+        "password_command": "pass show cli/db/tapi | head -n 1"
+      },
+      "tunnel": {
+        "enabled": false
+      }
+    },
+    {
+      "name": "TOS marsigli",
+      "db_type": "mysql",
+      "source": null,
+      "connection_url": null,
+      "folder_path": "",
+      "extra_options": {},
+      "options": {
+        "ssh_host": "",
+        "ssh_port": "22",
+        "ssh_username": "",
+        "ssh_auth_type": "key",
+        "ssh_key_path": "~/.ssh/id_rsa",
+        "ssh_password": null,
+        "tls_mode": "default",
+        "tls_ca": "",
+        "tls_cert": "",
+        "tls_key": "",
+        "tls_key_password": ""
+      },
+      "endpoint": {
+        "kind": "tcp",
+        "host": "127.0.0.1",
+        "port": "3308",
+        "database": "marsigli_tos",
+        "username": "marsigli_tos",
+        "password": null,
+        "password_command": "pass show cli/db/tos_marsigli | head -n 1"
+      },
+      "tunnel": {
+        "enabled": false
+      }
+    },
+    {
+      "name": "TOS look",
+      "db_type": "mysql",
+      "source": null,
+      "connection_url": null,
+      "folder_path": "",
+      "extra_options": {},
+      "options": {
+        "ssh_host": "",
+        "ssh_port": "22",
+        "ssh_username": "",
+        "ssh_auth_type": "key",
+        "ssh_key_path": "~/.ssh/id_rsa",
+        "ssh_password": null,
+        "tls_mode": "default",
+        "tls_ca": "",
+        "tls_cert": "",
+        "tls_key": "",
+        "tls_key_password": ""
+      },
+      "endpoint": {
+        "kind": "tcp",
+        "host": "127.0.0.1",
+        "port": "3308",
+        "database": "look_tos",
+        "username": "look_tos",
+        "password": null,
+        "password_command": "pass show cli/db/tos_look | head -n 1"
+      },
+      "tunnel": {
+        "enabled": false
+      }
+    },
+    {
+      "name": "TOS hello",
+      "db_type": "mysql",
+      "source": null,
+      "connection_url": null,
+      "folder_path": "",
+      "extra_options": {},
+      "options": {
+        "ssh_host": "",
+        "ssh_port": "22",
+        "ssh_username": "",
+        "ssh_auth_type": "key",
+        "ssh_key_path": "~/.ssh/id_rsa",
+        "ssh_password": null,
+        "tls_mode": "default",
+        "tls_ca": "",
+        "tls_cert": "",
+        "tls_key": "",
+        "tls_key_password": ""
+      },
+      "endpoint": {
+        "kind": "tcp",
+        "host": "127.0.0.1",
+        "port": "3308",
+        "database": "hello_tos",
+        "username": "hello_tos",
+        "password": null,
+        "password_command": "pass show cli/db/tos_hello | head -n 1"
+      },
+      "tunnel": {
+        "enabled": false
+      }
+    },
+    {
+      "name": "TOS root",
+      "db_type": "mysql",
+      "source": null,
+      "connection_url": null,
+      "folder_path": "",
+      "extra_options": {},
+      "options": {
+        "ssh_host": "",
+        "ssh_port": "22",
+        "ssh_username": "",
+        "ssh_auth_type": "key",
+        "ssh_key_path": "~/.ssh/id_rsa",
+        "ssh_password": null,
+        "tls_mode": "default",
+        "tls_ca": "",
+        "tls_cert": "",
+        "tls_key": "",
+        "tls_key_password": ""
+      },
+      "endpoint": {
+        "kind": "tcp",
+        "host": "127.0.0.1",
+        "port": "3308",
+        "database": "mysql",
+        "username": "root",
+        "password": null,
+        "password_command": "pass show cli/db/tos_root | head -n 1"
+      },
+      "tunnel": {
+        "enabled": false
+      }
+    },
+    {
+      "name": "TOS posada",
+      "db_type": "mysql",
+      "source": null,
+      "connection_url": null,
+      "folder_path": "",
+      "extra_options": {},
+      "options": {
+        "ssh_host": "",
+        "ssh_port": "22",
+        "ssh_username": "",
+        "ssh_auth_type": "key",
+        "ssh_key_path": "~/.ssh/id_rsa",
+        "ssh_password": null,
+        "tls_mode": "default",
+        "tls_ca": "",
+        "tls_cert": "",
+        "tls_key": "",
+        "tls_key_password": ""
+      },
+      "endpoint": {
+        "kind": "tcp",
+        "host": "127.0.0.1",
+        "port": "3309",
+        "database": "posada_tos",
+        "username": "posada_tos",
+        "password": null,
+        "password_command": "pass show cli/db/tos_posada | head -n 1"
+      },
+      "tunnel": {
+        "enabled": false
+      }
+    },
+    {
+      "name": "TOS vilex",
+      "db_type": "mysql",
+      "source": null,
+      "connection_url": null,
+      "folder_path": "",
+      "extra_options": {},
+      "options": {
+        "ssh_host": "",
+        "ssh_port": "22",
+        "ssh_username": "",
+        "ssh_auth_type": "key",
+        "ssh_key_path": "~/.ssh/id_rsa",
+        "ssh_password": null,
+        "tls_mode": "default",
+        "tls_ca": "",
+        "tls_cert": "",
+        "tls_key": "",
+        "tls_key_password": ""
+      },
+      "endpoint": {
+        "kind": "tcp",
+        "host": "127.0.0.1",
+        "port": "3309",
+        "database": "vilex_tos",
+        "username": "vilex_tos",
+        "password": null,
+        "password_command": "pass show cli/db/tos_vilex | head -n 1"
+      },
+      "tunnel": {
+        "enabled": false
+      }
+    },
+    {
+      "name": "Sail",
+      "db_type": "mysql",
+      "source": null,
+      "connection_url": null,
+      "folder_path": "",
+      "extra_options": {},
+      "options": {
+        "ssh_host": "",
+        "ssh_port": "22",
+        "ssh_username": "",
+        "ssh_auth_type": "key",
+        "ssh_key_path": "~/.ssh/id_rsa",
+        "ssh_password": null,
+        "tls_mode": "default",
+        "tls_ca": "",
+        "tls_cert": "",
+        "tls_key": "",
+        "tls_key_password": ""
+      },
+      "endpoint": {
+        "kind": "tcp",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "database": "laravel",
+        "username": "sail",
+        "password": null,
+        "password_command": "echo password"
+      },
+      "tunnel": {
+        "enabled": false
+      }
+    }
+  ]
+}
