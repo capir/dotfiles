@@ -35,6 +35,13 @@ mkdir -p "$HOME/.config/lazysql"
 rm -rf "$HOME/.config/lazysql/config.toml"
 ln -s "$DOTFILES/lazysql/config.toml" "$HOME/.config/lazysql/config.toml"
 
+# gpg-agent config (pinentry-mac); restart the agent to pick up changes
+mkdir -p "$HOME/.gnupg"
+chmod 700 "$HOME/.gnupg"
+rm -rf "$HOME/.gnupg/gpg-agent.conf"
+ln -s "$DOTFILES/gnupg/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf"
+gpgconf --kill gpg-agent
+
 # aider config
 rm -rf "$HOME/.aider.conf.yml"
 rm -rf "$HOME/.aider.model.settings.yml"
