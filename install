@@ -11,6 +11,7 @@ rm -rf "$HOME/.config/kitty"
 ln -s "$DOTFILES/kitty" "$HOME/.config/kitty"
 
 # Tmux config
+mkdir -p "$HOME/.tmux"
 rm -rf "$HOME/.tmux.conf" "$HOME/.tmux/plugins"
 ln -s "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
 ln -s "$DOTFILES/tmux/plugins" "$HOME/.tmux/plugins"
@@ -103,8 +104,30 @@ ln -s "$DOTFILES/scripts/decrypt-pdfs.sh" "$HOME/.local/bin/decrypt-pdfs"
 rm -rf "$HOME/.local/bin/upload-commit"
 ln -s "$DOTFILES/scripts/upload-commit.sh" "$HOME/.local/bin/upload-commit"
 
-rm -rf "$ZSH_CUSTOM"
-ln -s "$DOTFILES/omz_custom" "$ZSH_CUSTOM"
+for n in note-gen note-link note-refine note-save; do
+  rm -rf "$HOME/.local/bin/$n"
+  ln -s "$DOTFILES/scripts/$n" "$HOME/.local/bin/$n"
+done
+
+rm -rf "$HOME/.local/bin/vault"
+ln -s "$DOTFILES/scripts/vault" "$HOME/.local/bin/vault"
+
+rm -rf "$HOME/.local/bin/fin_dash" "$HOME/.local/bin/fin_dash-html"
+ln -s "$DOTFILES/scripts/fin_dash" "$HOME/.local/bin/fin_dash"
+ln -s "$DOTFILES/scripts/fin_dash-html" "$HOME/.local/bin/fin_dash-html"
+
+rm -rf "$HOME/.local/bin/record_meeting"
+ln -s "$DOTFILES/scripts/record_meeting.sh" "$HOME/.local/bin/record_meeting"
+
+rm -rf "$HOME/.local/bin/openai-rate"
+ln -s "$DOTFILES/scripts/openai-rate.py" "$HOME/.local/bin/openai-rate"
+
+rm -rf "$HOME/.local/bin/digimount" "$HOME/.local/bin/digiumount"
+ln -s "$DOTFILES/scripts/digimount.pl" "$HOME/.local/bin/digimount"
+ln -s "$DOTFILES/scripts/digiumount.pl" "$HOME/.local/bin/digiumount"
+
+# Oh-my-zsh custom: zshrc sets ZSH_CUSTOM="$HOME/dotfiles/omz_custom" directly,
+# so no symlink is needed (rm -rf "$ZSH_CUSTOM" here would delete omz_custom).
 
 # Aliases
 rm -rf "$HOME/.aliases"
